@@ -9,13 +9,16 @@ export default class Params {
       '--list': Boolean,
       '--version': Boolean,
       '--help': Boolean,
+      '--mode': String,
+      '--host': String,
+      '--port': Number,
 
       // Aliases
       '-i': '--id',
-      '-c': '--cc',
-      '-v': '--value',
       '-l': '--list',
       '-h': '--help',
+      '-m': '--mode',
+      '-p': '--port',
     });
     if (process.argv.length <= 1) Params.help();
   }
@@ -28,28 +31,29 @@ export default class Params {
     log('     Required options:');
     log('');
     log('   -i    --id                  -- midi interface id');
+    log('   -m    --mode                -- server or client');
+    log('   -p    --port                -- TCP port');
+    log('   --host                      -- host ip');
     log('');
     log('     Extra options:');
     log('');
-    log('   --list     -l               -- show available midi interface');
+    log('   --list     -l               -- show available midi interfaces');
     log('   --version                   -- show version');
     log('   --help     -h               -- show help');
     process.exit(0);
   }
 
-  get id() {
-    return this.args['--id'];
-  }
+  get id() { return this.args['--id']; }
 
-  get list() {
-    return this.args['--list'];
-  }
+  get list() { return this.args['--list']; }
 
-  get version() {
-    return this.args['--version'];
-  }
+  get version() { return this.args['--version']; }
 
-  get help() {
-    return this.args['--help'];
-  }
+  get help() { return this.args['--help']; }
+
+  get mode() { return this.args['--mode']; }
+
+  get host() { return this.args['--host']; }
+
+  get port() { return this.args['--port']; }
 }
