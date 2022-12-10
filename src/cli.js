@@ -22,12 +22,11 @@ if (params.version) {
 if (params.list) {
   log('');
   log('input interfaces :');
-  log(easymidi.getInputs().toString());
+  easymidi.getInputs().map((input, index) => log(`${index} -> ${input}`));
 
   log('');
   log('output interfaces :');
-  log(easymidi.getOutputs().toString());
-
+  easymidi.getOutputs().map((output, index) => log(`${index} -> ${output}`));
   exit(0);
 }
 
