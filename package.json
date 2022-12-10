@@ -2,7 +2,7 @@
   "name": "remote-midi-server",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "src/remote-midi.js",
   "type": "module",
   "scripts": {
     "test:remote-midi-server": "node test/remote-midi-server.js",
