@@ -9,6 +9,7 @@
     "test:remote-midi-client": "node test/remote-midi-client.js",
     "test:tcp-server": "node test/tcp-server.js",
     "test:tcp-client": "node test/tcp-client.js",
+    "test:tcp-midi": "node test/tcp-midi.js",
     "lint": "eslint src",
     "package": "caxa --input . -e test/ --output dist/remote-midi.exe -- {{caxa}}/node_modules/.bin/node.exe {{caxa}}/src/cli.js"
   },

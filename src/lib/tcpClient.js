@@ -12,12 +12,16 @@ class TCPClient extends net.Socket {
     this.#port = port;
   }
 
+  static decodeString(buffer) { return buffer.toString(); }
+  static decodeJSON(buffer) {
+    const decodedString = TCPClient.decodeString(buffer).replaceAll('][', ',');
+    return JSON.parse(decodedString);
+  }
+
   start() {
     log.title(`trying to connect to ${this.#host}:${this.#port}`);
     this.connect(this.#port, this.#host, () => {
       log.info('connected');
-      log.info('send a message');
-      this.write(`Hello From Client ${this.address().address}`);
     });
     return this;
   }

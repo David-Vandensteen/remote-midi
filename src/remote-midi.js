@@ -1,9 +1,8 @@
 /* eslint-disable lines-between-class-members */
-import EventEmitter from 'events';
 import easymidi from 'easymidi';
 import { log } from '#src/lib/log';
 import { TCPServer } from '#src/lib/tcpServer';
-import { TCPClient } from '#src/lib/tcpClient';
+import { TCPMidi } from '#src/lib/tcpMidi';
 
 const getAllMidiEvent = () => [
   'noteoff',
@@ -22,7 +21,7 @@ const getAllMidiEvent = () => [
   'reset',
 ];
 
-class RemoteMidi extends EventEmitter {
+class RemoteMidi {
   #host = '127.0.0.1';
   #port = '7070';
   #mode = 'client';
@@ -30,11 +29,11 @@ class RemoteMidi extends EventEmitter {
   #midiInput;
   #midiOutput;
   #events;
+  #tcpMidi;
 
   constructor({
     host, port, midiDeviceId, mode,
   }) {
-    super();
     this.#host = host;
     this.#port = port;
     this.#mode = mode;
@@ -51,31 +50,22 @@ class RemoteMidi extends EventEmitter {
 
     this.#midiOutput = new easymidi.Output(easymidi.getOutputs()[this.#midiDeviceId]);
 
-    log.info(`trying to send a midi message to device ${this.#midiDeviceId} -> ${easymidi.getOutputs()[this.#midiDeviceId].toString()}`);
-    log('');
-    this.#midiOutput.send('cc', {
-      controller: 37,
-      value: 80,
-      channel: 0,
-    });
-
     const tcpServer = new TCPServer({ host: this.#host, port: this.#port });
     tcpServer.on('data', (dataBuffer) => {
-      log.info('received message :', dataBuffer.toString());
-      this.emit('data', dataBuffer);
+      log.info('received messages :', dataBuffer.toString());
+      log.info('send the messages to midi device');
+      log.info('DEBUG decode messages', TCPMidi.decode(dataBuffer));
+
+      TCPMidi.decode(dataBuffer)
+        .map((data) => this.#midiOutput.send(data.type, data.message));
     });
     tcpServer.start();
   }
 
   #client() {
     log.title('starting remote midi client');
-    const tcpClient = new TCPClient({ host: this.#host, port: this.#port });
-    this.on('mirror', (message) => {
-      log('emit mirror message', message);
-      tcpClient.write(JSON.stringify(message));
-      // tcpClient.write('debug');
-    });
-    tcpClient.start();
+    this.#tcpMidi = new TCPMidi({ host: this.#host, port: this.#port });
+    this.#tcpMidi.start();
   }
 
   registerEvents(events) {
@@ -90,13 +80,9 @@ class RemoteMidi extends EventEmitter {
     log.info('midi events to transport :', this.#events);
 
     this.#midiInput = new easymidi.Input(easymidi.getInputs()[this.#midiDeviceId].toString());
-
-    const duplicate = (message) => {
-      log('mirror', message);
-      this.emit('mirror', message);
-    };
-
-    this.#events.map((eventName) => this.#midiInput.on(eventName, (msg) => duplicate(msg)));
+    this.#events.map(
+      (eventName) => this.#midiInput.on(eventName, (message) => this.#tcpMidi.send(message)),
+    );
 
     log('');
     return this;
