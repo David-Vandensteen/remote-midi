@@ -69,15 +69,12 @@ class RemoteMidi extends EventEmitter {
 
   #client() {
     log.title('starting remote midi client');
-    log.info('input midi device :', easymidi.getInputs(this.#midiDeviceId).toString());
-    log.info('midi events to transport :', this.#events);
-
-    this.#midiInput = new easymidi.Input(easymidi.getInputs(this.#midiDeviceId).toString());
-
-    this.#events.map((eventName) => this.#midiInput.on(eventName, () => log(eventName)));
-
-    log('');
     const tcpClient = new TCPClient({ host: this.#host, port: this.#port });
+    this.on('mirror', (message) => {
+      log('emit mirror message', message);
+      tcpClient.write(JSON.stringify(message));
+      // tcpClient.write('debug');
+    });
     tcpClient.start();
   }
 
@@ -86,22 +83,46 @@ class RemoteMidi extends EventEmitter {
     return this;
   }
 
+  mirror({ midiDeviceId }) {
+    this.#midiDeviceId = midiDeviceId;
+    log.title(`mirror input device id ${midiDeviceId}`);
+    log.info('input midi device :', easymidi.getInputs()[this.#midiDeviceId].toString());
+    log.info('midi events to transport :', this.#events);
+
+    this.#midiInput = new easymidi.Input(easymidi.getInputs()[this.#midiDeviceId].toString());
+
+    const duplicate = (message) => {
+      log('mirror', message);
+      this.emit('mirror', message);
+    };
+
+    this.#events.map((eventName) => this.#midiInput.on(eventName, (msg) => duplicate(msg)));
+
+    log('');
+    return this;
+  }
+
   start() { if (this.#mode === 'server') this.#server(); else this.#client(); }
 }
 
-function rMidiClient({ host, port, midiDeviceId }) {
+const rMidiClient = ({ host, port }) => {
   const rMidi = new RemoteMidi({
-    host, port, midiDeviceId, mode: 'client',
+    host, port, mode: 'client',
   });
   return rMidi;
-}
+};
 
-function rMidiServer({ host, port, midiDeviceId }) {
+const rMidiServer = ({ host, port, midiDeviceId }) => {
   const rMidi = new RemoteMidi({
     host, port, midiDeviceId, mode: 'server',
   });
   return rMidi;
-}
+};
 
 export default RemoteMidi;
-export { rMidiClient, rMidiServer, getAllMidiEvent };
+export {
+  RemoteMidi,
+  rMidiClient,
+  rMidiServer,
+  getAllMidiEvent,
+};
