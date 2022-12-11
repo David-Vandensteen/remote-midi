@@ -45,17 +45,17 @@ class RemoteMidi {
   }
 
   #server() {
-    log.title('starting remote midi server');
-    log('');
+    this.#spinnies.add('remote midi server is listening');
     log.info('available output midi devices :', easymidi.getOutputs().toString());
     log.info('selected midi device id:', this.#midiDeviceId);
     log.info('selected midi device name:', easymidi.getOutputs()[this.#midiDeviceId]);
 
     this.#midiOutput = new easymidi.Output(easymidi.getOutputs()[this.#midiDeviceId]);
 
-    this.#spinnies.add('waiting data');
+    this.#spinnies.add('waiting data to receive');
 
     const tcpServer = new TCPServer({ host: this.#host, port: this.#port });
+    this.#spinnies.succeed('remote midi server is listening');
     tcpServer.on('data', (dataBuffer) => {
       log.info('received messages :', dataBuffer.toString());
       log.info('send the messages to midi device');
@@ -68,9 +68,11 @@ class RemoteMidi {
   }
 
   #client() {
-    log.title('starting remote midi client');
+    this.#spinnies.add('remote midi client is started');
     this.#tcpMidi = new TCPMidi({ host: this.#host, port: this.#port });
     this.#tcpMidi.start();
+    this.#spinnies.succeed('remote midi client is started');
+    this.#spinnies.add('waiting data to send');
   }
 
   registerEvents(events) {

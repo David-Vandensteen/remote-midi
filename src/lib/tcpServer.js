@@ -1,6 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import EventEmitter from 'events';
 import net from 'net';
+import Spinnies from 'spinnies';
 import { log } from '#src/lib/log';
 
 class TCPServer extends EventEmitter {
@@ -8,22 +9,24 @@ class TCPServer extends EventEmitter {
   #port = 7070;
   #server;
   #sockets;
+  #spinnies;
 
   constructor({ host, port }) {
     super();
     this.#host = host;
     this.#port = port;
     this.#sockets = [];
+    this.#spinnies = new Spinnies();
   }
 
   start() {
+    this.#spinnies.add(`TCP Server is running on ${this.#host}:${this.#port}`);
     this.#server = net.createServer();
     this.#server.listen(this.#port, this.#host, () => {
-      log.title(`TCP Server is running on ${this.#host}:${this.#port}`);
-      log('');
+      this.#spinnies.succeed(`TCP Server is running on ${this.#host}:${this.#port}`);
     });
     this.#server.on('connection', (sock) => {
-      log.info(`TCP CONNECTED: ${sock.remoteAddress}:${sock.remotePort}`);
+      log.info(`TCP client is connected from : ${sock.remoteAddress}:${sock.remotePort}`);
       this.#sockets.push(sock);
 
       sock.on('data', (data) => {

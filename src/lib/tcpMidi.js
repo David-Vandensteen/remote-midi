@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { TCPClient } from '#src/lib/tcpClient';
+import { log } from '#src/lib/log';
 
 class TCPMidi extends TCPClient {
   static decode(bufferMessages) {
@@ -17,6 +18,7 @@ class TCPMidi extends TCPClient {
 
   send(message) {
     this.write(JSON.stringify([message]));
+    log.debug('send data', JSON.stringify([message]));
   }
 }
 
