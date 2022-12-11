@@ -3,6 +3,7 @@ import easymidi from 'easymidi';
 import { log } from '#src/lib/log';
 import { TCPServer } from '#src/lib/tcpServer';
 import { TCPMidi } from '#src/lib/tcpMidi';
+import Spinnies from 'spinnies';
 
 const getAllMidiEvent = () => [
   'noteoff',
@@ -30,6 +31,7 @@ class RemoteMidi {
   #midiOutput;
   #events;
   #tcpMidi;
+  #spinnies;
 
   constructor({
     host, port, midiDeviceId, mode,
@@ -38,6 +40,7 @@ class RemoteMidi {
     this.#port = port;
     this.#mode = mode;
     this.#events = getAllMidiEvent();
+    this.#spinnies = new Spinnies();
     if (midiDeviceId) this.#midiDeviceId = midiDeviceId;
   }
 
@@ -49,6 +52,8 @@ class RemoteMidi {
     log.info('selected midi device name:', easymidi.getOutputs()[this.#midiDeviceId]);
 
     this.#midiOutput = new easymidi.Output(easymidi.getOutputs()[this.#midiDeviceId]);
+
+    this.#spinnies.add('waiting data');
 
     const tcpServer = new TCPServer({ host: this.#host, port: this.#port });
     tcpServer.on('data', (dataBuffer) => {
