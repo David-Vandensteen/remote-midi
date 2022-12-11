@@ -54,7 +54,7 @@ class RemoteMidi {
     tcpServer.on('data', (dataBuffer) => {
       log.info('received messages :', dataBuffer.toString());
       log.info('send the messages to midi device');
-      log.info('DEBUG decode messages', TCPMidi.decode(dataBuffer));
+      log.debug('DEBUG decode messages', TCPMidi.decode(dataBuffer));
 
       TCPMidi.decode(dataBuffer)
         .map((data) => this.#midiOutput.send(data.type, data.message));

@@ -27,7 +27,7 @@ class TCPServer extends EventEmitter {
       this.#sockets.push(sock);
 
       sock.on('data', (data) => {
-        log.info(`TCP DATA ${sock.remoteAddress}: ${data}`);
+        log.debug(`TCP DATA ${sock.remoteAddress}: ${data}`);
         this.#sockets.forEach((socket) => {
           sock.write(`TCP ${socket.remoteAddress}:${socket.remotePort} said ${data}\n`);
         });
