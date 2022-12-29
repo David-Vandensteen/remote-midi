@@ -64,6 +64,7 @@ class RemoteMidi {
         .map((data) => this.#midiOutput.send(data.type, data.message));
     });
     tcpServer.start();
+    return this;
   }
 
   #client() {
@@ -72,12 +73,15 @@ class RemoteMidi {
     this.#tcpMidi.start();
     this.#spinnies.succeed('remote midi client is started');
     this.#spinnies.add('waiting data to send');
+    return this;
   }
 
   registerEvents(events) {
     this.#events = events;
     return this;
   }
+
+  send(type, message) { this.#tcpMidi.send(type, message); }
 
   mirror({ midiDeviceId }) {
     this.#midiDeviceId = midiDeviceId;
@@ -94,7 +98,7 @@ class RemoteMidi {
     return this;
   }
 
-  start() { if (this.#mode === 'server') this.#server(); else this.#client(); }
+  start() { if (this.#mode === 'server') return this.#server(); return this.#client(); }
 }
 
 const rMidiClient = ({ host, port }) => {
