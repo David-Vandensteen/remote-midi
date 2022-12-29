@@ -10,7 +10,7 @@
     "test:tcp-server": "node test/tcp-server.js",
     "test:tcp-client": "node test/tcp-client.js",
     "test:tcp-midi": "node test/tcp-midi.js",
-    "lint": "eslint src",
+    "lint": "eslint src test",
     "package": "caxa --input . -e test/ --output dist/remote-midi.exe -- {{caxa}}/node_modules/.bin/node.exe {{caxa}}/src/cli.js"
   },
   "author": "David Vandensteen <dvandensteen@gmail.com>",

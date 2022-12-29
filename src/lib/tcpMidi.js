@@ -16,9 +16,11 @@ class TCPMidi extends TCPClient {
     return decodedMessages;
   }
 
-  send(message) {
-    this.write(JSON.stringify([message]));
-    log.debug('send data', JSON.stringify([message]));
+  send(type, message) {
+    const processMessage = message;
+    processMessage._type = type;
+    this.write(JSON.stringify([processMessage]));
+    log.debug('send data', JSON.stringify([processMessage]));
   }
 }
 

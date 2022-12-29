@@ -52,14 +52,13 @@ class RemoteMidi {
 
     this.#midiOutput = new easymidi.Output(easymidi.getOutputs()[this.#midiDeviceId]);
 
-    this.#spinnies.add('waiting data to receive');
+    this.#spinnies.add('waiting data');
 
     const tcpServer = new TCPServer({ host: this.#host, port: this.#port });
     this.#spinnies.succeed('remote midi server is listening');
     tcpServer.on('data', (dataBuffer) => {
       log.info('received messages :', dataBuffer.toString());
       log.info('send the messages to midi device');
-      log.debug('DEBUG decode messages', TCPMidi.decode(dataBuffer));
 
       TCPMidi.decode(dataBuffer)
         .map((data) => this.#midiOutput.send(data.type, data.message));
