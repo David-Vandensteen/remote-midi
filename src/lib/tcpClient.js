@@ -1,23 +1,29 @@
 /* eslint-disable lines-between-class-members */
 import net from 'net';
-import { log } from '#src/lib/log';
+import Spinnies from 'spinnies';
 
 class TCPClient extends net.Socket {
   #host = '127.0.0.1';
   #port = 7070;
+  #spinnies;
 
   constructor({ host, port }) {
     super();
     this.#host = host;
     this.#port = port;
+    this.#spinnies = new Spinnies();
+    this.#spinnies.add('connected');
+  }
+
+  static decodeString(buffer) { return buffer.toString(); }
+  static decodeJSON(buffer) {
+    const decodedString = TCPClient.decodeString(buffer).replaceAll('][', ',');
+    return JSON.parse(decodedString);
   }
 
   start() {
-    log.title(`trying to connect to ${this.#host}:${this.#port}`);
     this.connect(this.#port, this.#host, () => {
-      log.info('connected');
-      log.info('send a message');
-      this.write(`Hello From Client ${this.address().address}`);
+      this.#spinnies.succeed('connected');
     });
     return this;
   }

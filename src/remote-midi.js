@@ -1,9 +1,9 @@
 /* eslint-disable lines-between-class-members */
-import EventEmitter from 'events';
 import easymidi from 'easymidi';
 import { log } from '#src/lib/log';
 import { TCPServer } from '#src/lib/tcpServer';
-import { TCPClient } from '#src/lib/tcpClient';
+import { TCPMidi } from '#src/lib/tcpMidi';
+import Spinnies from 'spinnies';
 
 const getAllMidiEvent = () => [
   'noteoff',
@@ -22,7 +22,7 @@ const getAllMidiEvent = () => [
   'reset',
 ];
 
-class RemoteMidi extends EventEmitter {
+class RemoteMidi {
   #host = '127.0.0.1';
   #port = '7070';
   #mode = 'client';
@@ -30,55 +30,48 @@ class RemoteMidi extends EventEmitter {
   #midiInput;
   #midiOutput;
   #events;
+  #tcpMidi;
+  #spinnies;
 
   constructor({
     host, port, midiDeviceId, mode,
   }) {
-    super();
     this.#host = host;
     this.#port = port;
     this.#mode = mode;
     this.#events = getAllMidiEvent();
+    this.#spinnies = new Spinnies();
     if (midiDeviceId) this.#midiDeviceId = midiDeviceId;
   }
 
   #server() {
-    log.title('starting remote midi server');
-    log('');
+    this.#spinnies.add('remote midi server is listening');
     log.info('available output midi devices :', easymidi.getOutputs().toString());
     log.info('selected midi device id:', this.#midiDeviceId);
     log.info('selected midi device name:', easymidi.getOutputs()[this.#midiDeviceId]);
 
     this.#midiOutput = new easymidi.Output(easymidi.getOutputs()[this.#midiDeviceId]);
 
-    log.info(`trying to send a midi message to device ${this.#midiDeviceId} -> ${easymidi.getOutputs()[this.#midiDeviceId].toString()}`);
-    log('');
-    this.#midiOutput.send('cc', {
-      controller: 37,
-      value: 80,
-      channel: 0,
-    });
+    this.#spinnies.add('waiting data');
 
     const tcpServer = new TCPServer({ host: this.#host, port: this.#port });
+    this.#spinnies.succeed('remote midi server is listening');
     tcpServer.on('data', (dataBuffer) => {
-      log.info('received message :', dataBuffer.toString());
-      this.emit('data', dataBuffer);
+      log.info('received messages :', dataBuffer.toString());
+      log.info('send the messages to midi device');
+
+      TCPMidi.decode(dataBuffer)
+        .map((data) => this.#midiOutput.send(data.type, data.message));
     });
     tcpServer.start();
   }
 
   #client() {
-    log.title('starting remote midi client');
-    log.info('input midi device :', easymidi.getInputs(this.#midiDeviceId).toString());
-    log.info('midi events to transport :', this.#events);
-
-    this.#midiInput = new easymidi.Input(easymidi.getInputs(this.#midiDeviceId).toString());
-
-    this.#events.map((eventName) => this.#midiInput.on(eventName, () => log(eventName)));
-
-    log('');
-    const tcpClient = new TCPClient({ host: this.#host, port: this.#port });
-    tcpClient.start();
+    this.#spinnies.add('remote midi client is started');
+    this.#tcpMidi = new TCPMidi({ host: this.#host, port: this.#port });
+    this.#tcpMidi.start();
+    this.#spinnies.succeed('remote midi client is started');
+    this.#spinnies.add('waiting data to send');
   }
 
   registerEvents(events) {
@@ -86,22 +79,42 @@ class RemoteMidi extends EventEmitter {
     return this;
   }
 
+  mirror({ midiDeviceId }) {
+    this.#midiDeviceId = midiDeviceId;
+    log.title(`mirror input device id ${midiDeviceId}`);
+    log.info('input midi device :', easymidi.getInputs()[this.#midiDeviceId].toString());
+    log.info('midi events to transport :', this.#events);
+
+    this.#midiInput = new easymidi.Input(easymidi.getInputs()[this.#midiDeviceId].toString());
+    this.#events.map(
+      (eventName) => this.#midiInput.on(eventName, (message) => this.#tcpMidi.send(message)),
+    );
+
+    log('');
+    return this;
+  }
+
   start() { if (this.#mode === 'server') this.#server(); else this.#client(); }
 }
 
-function rMidiClient({ host, port, midiDeviceId }) {
+const rMidiClient = ({ host, port }) => {
   const rMidi = new RemoteMidi({
-    host, port, midiDeviceId, mode: 'client',
+    host, port, mode: 'client',
   });
   return rMidi;
-}
+};
 
-function rMidiServer({ host, port, midiDeviceId }) {
+const rMidiServer = ({ host, port, midiDeviceId }) => {
   const rMidi = new RemoteMidi({
     host, port, midiDeviceId, mode: 'server',
   });
   return rMidi;
-}
+};
 
 export default RemoteMidi;
-export { rMidiClient, rMidiServer, getAllMidiEvent };
+export {
+  RemoteMidi,
+  rMidiClient,
+  rMidiServer,
+  getAllMidiEvent,
+};
