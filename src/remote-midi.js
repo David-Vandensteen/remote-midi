@@ -101,6 +101,8 @@ class RemoteMidi {
   start() { if (this.#mode === 'server') return this.#server(); return this.#client(); }
 }
 
+const { getOutputs, getInputs } = easymidi;
+
 const rMidiClient = ({ host, port }) => {
   const rMidi = new RemoteMidi({
     host, port, mode: 'client',
@@ -121,4 +123,7 @@ export {
   rMidiClient,
   rMidiServer,
   getAllMidiEvent,
+  easymidi,
+  getOutputs,
+  getInputs,
 };
