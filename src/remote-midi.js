@@ -1,7 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import easymidi from 'easymidi';
 import { log } from '#src/lib/log';
-import { TCPServer } from '#src/lib/tcpServer';
+import { TCPServer, decode } from '#src/lib/tcpServer';
 import { TCPMidi } from '#src/lib/tcpMidi';
 import Spinnies from 'spinnies';
 
@@ -26,7 +26,7 @@ class RemoteMidi {
   #host = '127.0.0.1';
   #port = '7070';
   #mode = 'client';
-  #midiDeviceId = 0;
+  #midiDeviceName = '';
   #midiInput;
   #midiOutput;
   #events;
@@ -34,34 +34,36 @@ class RemoteMidi {
   #spinnies;
 
   constructor({
-    host, port, midiDeviceId, mode,
+    host, port, midiDeviceName, mode,
   }) {
     this.#host = host;
     this.#port = port;
     this.#mode = mode;
     this.#events = getAllMidiEvent();
     this.#spinnies = new Spinnies();
-    if (midiDeviceId) this.#midiDeviceId = midiDeviceId;
+    if (midiDeviceName) this.#midiDeviceName = midiDeviceName;
   }
 
   #server() {
     this.#spinnies.add('remote midi server is listening');
     log.info('available output midi devices :', easymidi.getOutputs().toString());
-    log.info('selected midi device id:', this.#midiDeviceId);
-    log.info('selected midi device name:', easymidi.getOutputs()[this.#midiDeviceId]);
+    log.info('selected midi device name:', this.#midiDeviceName);
 
-    this.#midiOutput = new easymidi.Output(easymidi.getOutputs()[this.#midiDeviceId]);
+    this.#midiOutput = new easymidi.Output(this.#midiDeviceName);
 
     this.#spinnies.add('waiting data');
 
     const tcpServer = new TCPServer({ host: this.#host, port: this.#port });
     this.#spinnies.succeed('remote midi server is listening');
     tcpServer.on('data', (dataBuffer) => {
-      log.info('received messages :', dataBuffer.toString());
-      log.info('send the messages to midi device');
+      log.info('received message :', dataBuffer.toString());
+      log.info('send the message to midi device');
 
-      TCPMidi.decode(dataBuffer)
-        .map((data) => this.#midiOutput.send(data.type, data.message));
+      const message = decode(dataBuffer);
+      const type = message._type;
+      delete message._type;
+
+      this.#midiOutput.send(type, message);
     });
     tcpServer.start();
     return this;
@@ -83,7 +85,10 @@ class RemoteMidi {
 
   send(type, message) { this.#tcpMidi.send(type, message); }
 
-  mirror({ midiDeviceId }) {
+  mirror({ midiDeviceName }) {
+    this.#midiDeviceName = midiDeviceName;
+    // TODO :  refactor with midi device name
+    /*
     this.#midiDeviceId = midiDeviceId;
     log.title(`mirror input device id ${midiDeviceId}`);
     log.info('input midi device :', easymidi.getInputs()[this.#midiDeviceId].toString());
@@ -95,6 +100,7 @@ class RemoteMidi {
     );
 
     log('');
+    */
     return this;
   }
 
@@ -110,9 +116,9 @@ const rMidiClient = ({ host, port }) => {
   return rMidi;
 };
 
-const rMidiServer = ({ host, port, midiDeviceId }) => {
+const rMidiServer = ({ host, port, midiDeviceName }) => {
   const rMidi = new RemoteMidi({
-    host, port, midiDeviceId, mode: 'server',
+    host, port, midiDeviceName, mode: 'server',
   });
   return rMidi;
 };

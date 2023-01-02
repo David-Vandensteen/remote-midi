@@ -4,6 +4,11 @@ import net from 'net';
 import Spinnies from 'spinnies';
 import { log } from '#src/lib/log';
 
+const decode = (message) => {
+  const decodedString = message.toString();
+  return JSON.parse(decodedString);
+};
+
 class TCPServer extends EventEmitter {
   #host = '127.0.0.1';
   #port = 7070;
@@ -49,4 +54,4 @@ class TCPServer extends EventEmitter {
 }
 
 export default TCPServer;
-export { TCPServer };
+export { TCPServer, decode };

@@ -1,4 +1,4 @@
-import { rMidiClient } from '#src/remote-midi';
+import { easymidi } from '#src/remote-midi';
 
 const syncWait = (ms) => {
   const end = Date.now() + ms;
@@ -6,21 +6,13 @@ const syncWait = (ms) => {
   while (Date.now() < end) () => 0;
 };
 
-const client = rMidiClient({ host: '127.0.0.1', port: 7070 });
-client.start();
+const midi = new easymidi.Output('server-midi');
 
 const velocity = 127;
 const channel = 0;
 
-client.send('cc', {
-  controller: 40,
-  value: 64,
-});
-
-/*
-
 for (let i = 100; i < 127; i += 1) {
-  client.send('noteon', {
+  midi.send('noteon', {
     note: i,
     velocity,
     channel,
@@ -28,18 +20,16 @@ for (let i = 100; i < 127; i += 1) {
 
   syncWait(200);
 
-  client.send('noteoff', {
+  midi.send('noteoff', {
     note: i,
     velocity,
     channel,
   });
 }
-*/
 
 /*
-client.start()
-  .send('cc', {
-    controller: 40,
-    value: 64,
-  });
-  */
+midi.send('cc', {
+  controller: 40,
+  value: 64,
+});
+*/
