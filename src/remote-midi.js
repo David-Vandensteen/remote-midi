@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable lines-between-class-members */
 import easymidi from 'easymidi';
 import { log } from '#src/lib/log';
