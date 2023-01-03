@@ -4,9 +4,9 @@ import net from 'net';
 import Spinnies from 'spinnies';
 import { log } from '#src/lib/log';
 
-const decode = (message) => {
-  const decodedString = message.toString();
-  return JSON.parse(decodedString);
+const decode = (bufferMessages) => {
+  const messages = JSON.parse(bufferMessages.toString().replaceAll('][', ','));
+  return messages;
 };
 
 class TCPServer extends EventEmitter {

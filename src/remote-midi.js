@@ -60,11 +60,17 @@ class RemoteMidi {
       log.info('received message :', dataBuffer.toString());
       log.info('send the message to midi device');
 
-      const message = decode(dataBuffer);
-      const type = message._type;
-      delete message._type;
+      log.info(decode(dataBuffer));
 
-      this.#midiOutput.send(type, message);
+      decode(dataBuffer).map((message) => {
+        const type = message._type;
+        // eslint-disable-next-line no-param-reassign
+        delete message._type;
+        this.#midiOutput.send(type, message);
+        log.debug('type', type);
+        log.debug('message', message);
+        return message;
+      });
     });
     tcpServer.start();
     return this;

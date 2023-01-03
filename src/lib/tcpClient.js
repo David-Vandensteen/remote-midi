@@ -2,7 +2,7 @@
 import net from 'net';
 import Spinnies from 'spinnies';
 
-const encode = (message) => `${JSON.stringify(message)}\n`;
+const encode = (message) => JSON.stringify([message]);
 
 class TCPClient extends net.Socket {
   #host = '127.0.0.1';

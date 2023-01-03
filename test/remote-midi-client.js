@@ -17,6 +17,14 @@ client.send('cc', {
   value: 64,
 });
 
+setInterval(() => {
+  client.send('noteon', {
+    note: 100,
+    velocity,
+    channel,
+  });
+}, 500);
+
 /*
 
 for (let i = 100; i < 127; i += 1) {
@@ -26,8 +34,6 @@ for (let i = 100; i < 127; i += 1) {
     channel,
   });
 
-  syncWait(200);
-
   client.send('noteoff', {
     note: i,
     velocity,
@@ -35,11 +41,3 @@ for (let i = 100; i < 127; i += 1) {
   });
 }
 */
-
-/*
-client.start()
-  .send('cc', {
-    controller: 40,
-    value: 64,
-  });
-  */
