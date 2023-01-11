@@ -10,6 +10,7 @@
     "test:tcp-server": "node test/tcp-server.js",
     "test:tcp-client": "node test/tcp-client.js",
     "test:local-midi": "node test/local-midi.js",
+    "test:local-midi-all-cc": "node test/local-midi-all-cc.js",
     "test:midi-device-list": "node test/midi-device-list",
     "lint": "eslint src test",
     "package": "caxa --input . -e test/ --output dist/remote-midi.exe -- {{caxa}}/node_modules/.bin/node.exe {{caxa}}/src/cli.js"
