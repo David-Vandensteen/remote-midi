@@ -4,11 +4,6 @@ import net from 'net';
 import Spinnies from 'spinnies';
 import { log } from '#src/lib/log';
 
-const decode = (bufferMessages) => {
-  const messages = JSON.parse(bufferMessages.toString().replaceAll('][', ','));
-  return messages;
-};
-
 class TCPServer extends EventEmitter {
   #host = '127.0.0.1';
   #port = 7070;
@@ -33,12 +28,15 @@ class TCPServer extends EventEmitter {
     this.#server.on('connection', (sock) => {
       log.info(`TCP client is connected from : ${sock.remoteAddress}:${sock.remotePort}`);
       this.#sockets.push(sock);
+      this.emit('connection', sock);
 
       sock.on('data', (data) => {
         log.debug(`TCP DATA ${sock.remoteAddress}: ${data}`);
+        /*
         this.#sockets.forEach((socket) => {
           sock.write(`TCP ${socket.remoteAddress}:${socket.remotePort} said ${data}\n`);
         });
+        */
         this.emit('data', data);
       });
 
@@ -54,4 +52,4 @@ class TCPServer extends EventEmitter {
 }
 
 export default TCPServer;
-export { TCPServer, decode };
+export { TCPServer };

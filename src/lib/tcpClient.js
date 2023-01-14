@@ -1,12 +1,11 @@
-/* eslint-disable lines-between-class-members */
 import net from 'net';
 import Spinnies from 'spinnies';
 
-const encode = (message) => JSON.stringify([message]);
-
-class TCPClient extends net.Socket {
+export default class TCPClient extends net.Socket {
   #host = '127.0.0.1';
+
   #port = 7070;
+
   #spinnies;
 
   constructor({ host, port }) {
@@ -18,12 +17,9 @@ class TCPClient extends net.Socket {
   }
 
   start() {
-    this.connect(this.#port, this.#host, () => {
-      this.#spinnies.succeed('connected');
-    });
+    this.connect(this.#port, this.#host, () => { this.#spinnies.succeed('connected'); });
     return this;
   }
 }
 
-export default TCPClient;
-export { TCPClient, encode };
+export { TCPClient };
