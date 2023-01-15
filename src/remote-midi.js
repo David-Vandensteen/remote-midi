@@ -164,4 +164,6 @@ export {
   easymidi,
   getOutputs,
   getInputs,
+  encode,
+  decode,
 };
