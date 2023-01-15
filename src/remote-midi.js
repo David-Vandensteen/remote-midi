@@ -4,6 +4,7 @@ import easymidi from 'easymidi';
 import { log } from '#src/lib/log';
 import { TCPServer } from '#src/lib/tcpServer';
 import { TCPMidi, encode, decode } from '#src/lib/tcpMidi';
+import { normalizeMidiMessage, normalizeMidiValue } from '#src/lib/midiMessageNormalizer';
 import Spinnies from 'spinnies';
 
 const getAllMidiEvent = () => [
@@ -166,4 +167,6 @@ export {
   getInputs,
   encode,
   decode,
+  normalizeMidiMessage,
+  normalizeMidiValue,
 };

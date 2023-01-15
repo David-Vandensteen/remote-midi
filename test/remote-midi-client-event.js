@@ -1,5 +1,4 @@
-import { rMidiClient } from '#src/remote-midi';
-import { decode } from '#src/lib/tcpMessage';
+import { rMidiClient, decode } from '#src/remote-midi';
 
 const { log } = console;
 

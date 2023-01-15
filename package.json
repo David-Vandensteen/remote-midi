@@ -13,6 +13,7 @@
     "test:local-midi": "node test/local-midi.js",
     "test:local-midi-all-cc": "node test/local-midi-all-cc.js",
     "test:midi-device-list": "node test/midi-device-list",
+    "test:normalize-message": "node test/normalize-message",
     "lint": "eslint src test",
     "package": "caxa --input . -e test/ --output dist/remote-midi.exe -- {{caxa}}/node_modules/.bin/node.exe {{caxa}}/src/cli.js"
   },
