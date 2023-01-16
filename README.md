@@ -11,3 +11,17 @@ const server = rMidiServer({
 });
 server.start();
 ```
+
+Client \ Slave side :
+```javascript
+import { rMidiClient } from '#src/remote-midi';
+
+const client = rMidiClient({ host: '192.168.0.1', port: 7070 });
+client
+  .start()
+  .send('cc', {
+    controller: 30,
+    value: 32,
+    channel: 0,
+  });
+```
