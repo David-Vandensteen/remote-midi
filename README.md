@@ -24,7 +24,7 @@ Send a MIDI message through a TCP protocol from a NodeJS application to a remote
                                                                 +----------------+
 
 
-this diagram represents the process of sending a MIDI message over TCP from a slave computer to a master computer, and then forwarding the message to a MIDI out device connected on the master computer.  
+This diagram represents the process of sending a MIDI message over TCP from a slave computer to a master computer, and then forwarding the message to a MIDI out device connected on the master computer.  
 The slave computer sends the MIDI message through a MIDI protocol to a TCP protocol, which is then received by the master computer. The master computer then forwards the message through MIDI message to a MIDI out device connected to it.  
 
 Server \ Master side :
@@ -52,6 +52,52 @@ client
 ```
 
 ## Bidirectional
+    +----------------+     +----------------+     +----------------+
+    | SLAVE COMPUTER |---->| MIDI MESSAGE   |---->| TCP            |
+    |                |     |                |     |                |
+    |    rMidiClient |     |                |     |                |
+    |                |     |                |     |                |
+    +----------------+     +----------------+     +----------------+
+                                                                |
+                                                                |
+                                                                v
+                                                          +----------------+
+                                                          | MASTER COMPUTER |
+                                                          |                |
+                                                          | rMidiServer    |
+                                                          |                |
+                                                          +----------------+
+                                                                      |
+                                                                      |
+                                                                      v
+                                                                +----------------+
+                                                                | MIDI OUT DEVICE|
+                                                                |                |
+                                                                +----------------+
+                                                                |
+                                                                |
+                                                                v
+                                                          +----------------+
+                                                          | MIDI IN DEVICE |
+                                                          |                |
+                                                          +----------------+
+                                                                      |
+                                                                      |
+                                                                      v
+                                                                +----------------+
+                                                                | TCP            |
+                                                                |                |
+                                                                +----------------+
+                                                                |
+                                                                |
+                                                                v
+                                                          +----------------+
+                                                          | SLAVE COMPUTER |
+                                                          |                |
+                                                          |    rMidiClient |
+                                                          |                |
+                                                          +----------------+
+
 
 This diagram represents the process of sending and receiving MIDI messages between a slave computer (running rMidiClient) and a master computer (running rMidiServer) over a TCP connection.  
 The slave computer sends MIDI messages to the master computer, which then uses the specified MIDI output device to send the message to a connected MIDI device.  
