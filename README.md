@@ -1,8 +1,12 @@
 # remote-midi
 
-Send a MIDI message through a TCP protocol from a NodeJS application to a remote MIDI interface connected to another computer.
+Remote-MIDI is a library that allows you to send MIDI messages between different computers through a TCP connection.  
+It can be used in both unidirectional and bidirectional communication scenarios.  
 
 ## Unidirectional
+
+In a unidirectional scenario, the slave computer sends MIDI messages to the master computer, which then forwards them to a MIDI out device connected to it.  
+The process is represented in the following diagram:
 
     +----------------+     +----------------+     +----------------+
     | SLAVE COMPUTER |---->| MIDI MESSAGE   |---->| TCP            |
@@ -24,10 +28,7 @@ Send a MIDI message through a TCP protocol from a NodeJS application to a remote
                                                                 +----------------+
 
 
-This diagram represents the process of sending a MIDI message over TCP from a slave computer to a master computer, and then forwarding the message to a MIDI out device connected on the master computer.  
-The slave computer sends the MIDI message through a MIDI protocol to a TCP protocol, which is then received by the master computer. The master computer then forwards the message through MIDI message to a MIDI out device connected to it.  
-
-Server \ Master side :
+On the server/master side, you can use the rMidiServer function to start a server that listens for incoming MIDI messages on a specific IP and port, and forwards them to a specific MIDI out device:
 ```javascript
 import { rMidiServer } from '#src/remote-midi';
 
@@ -37,7 +38,7 @@ const server = rMidiServer({
 server.start();
 ```
 
-Client \ Slave side :
+On the client/slave side, you can use the rMidiClient function to connect to the server and send MIDI messages:
 ```javascript
 import { rMidiClient } from '#src/remote-midi';
 
