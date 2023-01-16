@@ -74,29 +74,36 @@ client
                                                                 | MIDI OUT DEVICE|
                                                                 |                |
                                                                 +----------------+
-                                                                |
-                                                                |
-                                                                v
-                                                          +----------------+
-                                                          | MIDI IN DEVICE |
-                                                          |                |
-                                                          +----------------+
+
+
+
+                                                                +----------------+
+                                                                | MIDI IN DEVICE |
+                                                                |                |
+                                                                +----------------+
                                                                       |
                                                                       |
                                                                       v
                                                                 +----------------+
-                                                                | TCP            |
+                                                                | MASTER COMPUTER |
                                                                 |                |
                                                                 +----------------+
                                                                 |
                                                                 |
                                                                 v
                                                           +----------------+
-                                                          | SLAVE COMPUTER |
-                                                          |                |
-                                                          |    rMidiClient |
+                                                          | TCP            |
                                                           |                |
                                                           +----------------+
+                                                                      |
+                                                                      |
+                                                                      v
+                                                                +----------------+
+                                                                | SLAVE COMPUTER |
+                                                                |                |
+                                                                |    rMidiClient |
+                                                                |                |
+                                                                +----------------+
 
 
 This diagram represents the process of sending and receiving MIDI messages between a slave computer (running rMidiClient) and a master computer (running rMidiServer) over a TCP connection.  
