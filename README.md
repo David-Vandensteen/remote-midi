@@ -3,6 +3,13 @@
 Send a MIDI message through a TCP protocol from a NodeJS application to a remote MIDI interface connected to another computer.
 
 ## Unidirectional
+
+SLAVE COMPUTER 
+  -> send a midi message over TCP to master computer host
+
+MASTER COMPUTER receive the message 
+  -> forward the midi message to midi out device connected on master computer
+
 Server \ Master side :
 ```javascript
 import { rMidiServer } from '#src/remote-midi';
