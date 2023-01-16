@@ -1,0 +1,43 @@
+{
+  "name": "remote-midi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/remote-midi.js",
+  "type": "module",
+  "scripts": {
+    "test:remote-midi-server": "node test/remote-midi-server.js",
+    "test:remote-midi-server-bidirectional": "node test/remote-midi-server-bidirectional.js",
+    "test:remote-midi-client": "node test/remote-midi-client.js",
+    "test:remote-midi-client-cc": "node test/remote-midi-client-cc.js",
+    "test:remote-midi-client-cc-bidirectional" : "node test/remote-midi-client-cc-bidirectional.js",
+    "test:remote-midi-client-event": "node test/remote-midi-client-event.js",
+    "test:tcp-server": "node test/tcp-server.js",
+    "test:tcp-client": "node test/tcp-client.js",
+    "test:local-midi": "node test/local-midi.js",
+    "test:local-midi-all-cc": "node test/local-midi-all-cc.js",
+    "test:midi-device-list": "node test/midi-device-list",
+    "test:normalize-message": "node test/normalize-message",
+    "lint": "eslint src test",
+    "package": "caxa --input . -e test/ --output dist/remote-midi.exe -- {{caxa}}/node_modules/.bin/node.exe {{caxa}}/src/cli.js"
+  },
+  "author": "David Vandensteen <dvandensteen@gmail.com>",
+  "license": "MIT",
+  "imports": {
+    "#src/*": "./src/*.js"
+  },
+  "devDependencies": {
+    "caxa": "^3.0.1",
+    "eslint": "^8.29.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.26.0"
+  },
+  "dependencies": {
+    "app-root-path": "^3.1.0",
+    "arg": "^5.0.2",
+    "chalk": "^5.2.0",
+    "easymidi": "^3.0.1",
+    "fs-extra": "^11.1.0",
+    "spinnies": "^0.5.1"
+  }
+}
