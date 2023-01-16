@@ -53,6 +53,10 @@ client
 ```
 
 ## Bidirectional
+
+In a bidirectional scenario, not only can the slave computer send MIDI messages to the master computer, but the master computer can also send MIDI messages to the slave computer.  
+The process is represented in the following diagram:
+
     +----------------+     +----------------+     +----------------+
     | SLAVE COMPUTER |---->| MIDI MESSAGE   |---->| TCP            |
     |                |     |                |     |                |
@@ -107,8 +111,6 @@ client
                                                                 +----------------+
 
 
-This diagram represents the process of sending and receiving MIDI messages between a slave computer (running rMidiClient) and a master computer (running rMidiServer) over a TCP connection.  
-The slave computer sends MIDI messages to the master computer, which then uses the specified MIDI output device to send the message to a connected MIDI device.  
 The master computer also listens for MIDI messages from connected MIDI in device and sends them to the slave computer.
 
 
