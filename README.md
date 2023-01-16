@@ -111,15 +111,6 @@ The slave computer sends MIDI messages to the master computer, which then uses t
 The master computer also listens for MIDI messages from connected MIDI in device and sends them to the slave computer.
 
 
-SLAVE COMPUTER 
-  -> send a midi message over TCP to master computer host  
-  -> listen midi message from master computer
-
-MASTER COMPUTER receive the message 
-  -> forward the midi message to midi out device connected on master computer  
-  -> listen a midi in device and transmit messages to slave computer
-
-
 Server \ Master side :
 ```javascript
 import { rMidiServer } from '#src/remote-midi';
