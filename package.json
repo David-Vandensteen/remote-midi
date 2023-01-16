@@ -6,8 +6,10 @@
   "type": "module",
   "scripts": {
     "test:remote-midi-server": "node test/remote-midi-server.js",
+    "test:remote-midi-server-bidirectional": "node test/remote-midi-server-bidirectional.js",
     "test:remote-midi-client": "node test/remote-midi-client.js",
     "test:remote-midi-client-cc": "node test/remote-midi-client-cc.js",
+    "test:remote-midi-client-cc-bidirectional" : "node test/remote-midi-client-cc-bidirectional.js",
     "test:remote-midi-client-event": "node test/remote-midi-client-event.js",
     "test:tcp-server": "node test/tcp-server.js",
     "test:tcp-client": "node test/tcp-client.js",
