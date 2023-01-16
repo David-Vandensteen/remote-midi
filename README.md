@@ -111,10 +111,13 @@ The process is represented in the following diagram:
                                                                 +----------------+
 
 
-The master computer also listens for MIDI messages from connected MIDI in device and sends them to the slave computer.
+This is achieved by using the rMidiServer function on the master computer side to start a server that listens for incoming MIDI messages on a specific IP and port, and forwards them to a specific MIDI out device. The server also listens for MIDI messages from connected MIDI in device and sends them to the slave computer via the TCP protocol.
 
+On the client/slave side, you can use the rMidiClient function to connect to the server and send MIDI messages.  
+The client also listens for incoming MIDI messages from the server and can handle them accordingly.  
 
-Server \ Master side :
+Here is an example of how you can use the rMidiServer function on the master computer side:
+
 ```javascript
 import { rMidiServer } from '#src/remote-midi';
 
@@ -124,7 +127,7 @@ const server = rMidiServer({
 server.start();
 ```
 
-Client \ Slave side :
+and here is an example of how you can use the rMidiClient function on the slave computer side:
 ```javascript
 import { rMidiClient } from '#src/remote-midi';
 
