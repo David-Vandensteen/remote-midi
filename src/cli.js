@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import appRootPath from 'app-root-path';
 import Params from '#src/lib/params';
 import easymidi from 'easymidi';
-import { rMidiClient, rMidiServer } from '#src/remote-midi';
+import { rMidiClient, rMidiServer } from '#src/lib/remoteMidi';
 
 const { readJSONSync } = fs;
 const { resolve } = appRootPath;

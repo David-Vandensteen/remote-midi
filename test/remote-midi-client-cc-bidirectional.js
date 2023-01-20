@@ -1,4 +1,4 @@
-import { rMidiClient } from '#src/remote-midi';
+import { rMidiClient } from '#src/lib/remoteMidi';
 
 const { log } = console;
 const client = rMidiClient({ host: '127.0.0.1', port: 7070 });

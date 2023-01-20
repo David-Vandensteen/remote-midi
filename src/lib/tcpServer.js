@@ -1,4 +1,3 @@
-/* eslint-disable lines-between-class-members */
 import EventEmitter from 'events';
 import net from 'net';
 import Spinnies from 'spinnies';
@@ -6,9 +5,13 @@ import { log } from '#src/lib/log';
 
 class TCPServer extends EventEmitter {
   #host = '127.0.0.1';
+
   #port = 7070;
+
   #server;
+
   #sockets;
+
   #spinnies;
 
   constructor({ host, port }) {

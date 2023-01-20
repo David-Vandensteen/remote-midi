@@ -1,18 +1,15 @@
 import { TCPClient } from '#src/lib/tcpClient';
-import { encode, decode } from '#src/lib/tcpMessage';
+import { TCPMessage } from '#src/lib/tcpMessage';
 import { log } from '#src/lib/log';
 
-class TCPMidi extends TCPClient {
+export default class TCPMidi extends TCPClient {
   send(type, message) {
     const processMessage = message;
     // eslint-disable-next-line no-underscore-dangle
     processMessage._type = type;
-    this.write(encode(processMessage));
-    log.debug('send data', encode(processMessage));
+    this.write(TCPMessage.encode(processMessage));
+    log.debug('send data', TCPMessage.encode(processMessage));
   }
 }
 
-export default TCPMidi;
-export {
-  TCPMidi, TCPClient, encode, decode,
-};
+export { TCPMidi };
