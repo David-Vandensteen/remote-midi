@@ -19,6 +19,12 @@ export default class MidiNormalizer {
     return normalizedMessage;
   }
 
+  static controller(controller) {
+    if (controller >= 127) return 127;
+    if (controller <= 0) return 0;
+    return controller;
+  }
+
   static value(value) {
     if (value >= 127) return 127;
     if (value <= 0) return 0;
