@@ -1,5 +1,5 @@
 import { emitKeypressEvents } from 'readline';
-import { rMidiClient } from '#src/lib/remoteMidi';
+import { rMidiClient } from '#src/index';
 
 const { log } = console;
 

@@ -1,4 +1,4 @@
-import { MidiNormalizer } from '#src/lib/remoteMidi';
+import { MidiNormalizer } from '#src/index';
 
 const { log } = console;
 

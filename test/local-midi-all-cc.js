@@ -1,4 +1,4 @@
-import { easymidi } from '#src/lib/remoteMidi';
+import { easymidi } from '#src/index';
 
 const syncWait = (ms) => {
   const end = Date.now() + ms;

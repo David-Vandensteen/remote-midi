@@ -1,4 +1,4 @@
-import { rMidiClient, TCPMessage } from '#src/lib/remoteMidi';
+import { rMidiClient, TCPMessage } from '#src/index';
 
 const { log } = console;
 

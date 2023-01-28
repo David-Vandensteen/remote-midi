@@ -141,6 +141,8 @@ export default class RemoteMidi extends EventEmitter {
   start() { if (this.#mode === 'server') return this.#server(); return this.#client(); }
 }
 
+/*
+
 const rMidiClient = ({ host, port }) => new RemoteMidi({ host, port, mode: 'client' });
 const rMidiServer = ({
   host,
@@ -154,11 +156,10 @@ const rMidiServer = ({
   midiInputDeviceName,
   mode: 'server',
 });
+*/
 
 export {
   RemoteMidi,
-  rMidiClient,
-  rMidiServer,
   easymidi,
   getOutputs,
   getInputs,
