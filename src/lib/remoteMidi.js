@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import easymidi from 'easymidi';
 import { log } from '#src/lib/log';
 import { TCPServer } from '#src/lib/tcpServer';
-import { TCPMidi } from '#src/lib/tcpMidi';
+import { TCPMidiClient } from '#src/lib/tcpMidiClient';
 import { TCPMessage } from '#src/lib/tcpMessage';
 import { MidiNormalizer } from '#src/lib/midiNormalizer';
 import Spinnies from 'spinnies';
@@ -101,7 +101,7 @@ export default class RemoteMidi extends EventEmitter {
 
   #client() {
     this.#spinnies.add('remote midi client is started');
-    this.#tcpMidi = new TCPMidi({ host: this.#host, port: this.#port });
+    this.#tcpMidi = new TCPMidiClient({ host: this.#host, port: this.#port });
     this.#tcpMidi.start();
     this.#spinnies.succeed('remote midi client is started');
     this.#spinnies.add('waiting data to send');

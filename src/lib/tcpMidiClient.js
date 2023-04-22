@@ -2,7 +2,7 @@ import { TCPClient } from '#src/lib/tcpClient';
 import { TCPMessage } from '#src/lib/tcpMessage';
 import { log } from '#src/lib/log';
 
-export default class TCPMidi extends TCPClient {
+export default class TCPMidiClient extends TCPClient {
   send(type, message) {
     const processMessage = message;
     // eslint-disable-next-line no-underscore-dangle
@@ -12,4 +12,4 @@ export default class TCPMidi extends TCPClient {
   }
 }
 
-export { TCPMidi };
+export { TCPMidiClient };
