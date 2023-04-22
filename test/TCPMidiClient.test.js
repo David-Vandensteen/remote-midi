@@ -3,9 +3,7 @@ import { TCPMessage } from '#src/lib/tcpMessage';
 import { expect } from 'chai';
 import mocha from 'mocha';
 
-const describe = mocha.describe;
-const it = mocha.it;
-const after = mocha.after;
+const { describe, it } = mocha;
 
 describe('TCPMidi', () => {
   describe('#send', () => {
