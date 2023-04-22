@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
+    "test": "mocha 'test/**/*.test.js'",
     "test:remote-midi-server": "node test/remote-midi-server.js",
     "test:remote-midi-server-bidirectional": "node test/remote-midi-server-bidirectional.js",
     "test:remote-midi-client": "node test/remote-midi-client.js",
@@ -27,10 +28,12 @@
   },
   "devDependencies": {
     "caxa": "^3.0.1",
+    "chai": "^4.3.7",
     "eslint": "^8.39.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-import": "^2.27.5"
+    "eslint-plugin-import": "^2.27.5",
+    "mocha": "^10.2.0"
   },
   "dependencies": {
     "app-root-path": "^3.1.0",
