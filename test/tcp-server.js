@@ -1,4 +1,13 @@
 import { TCPServer } from '#src/lib/tcpServer';
 
-const server = new TCPServer('127.0.0.1', 7070);
-server.start();
+const { log, error } = console;
+const host = '127.0.0.1';
+const port = 7070;
+
+try {
+  const server = new TCPServer(host, port);
+  server.start();
+  log('TCPServer::starting on', `${host}:${port}`);
+} catch (err) {
+  error(err);
+}

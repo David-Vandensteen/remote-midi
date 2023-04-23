@@ -1,7 +1,5 @@
 import net from 'net';
 
-const { log } = console;
-
 export default class TCPClient extends net.Socket {
   #host = '127.0.0.1';
 
@@ -15,7 +13,7 @@ export default class TCPClient extends net.Socket {
   }
 
   start() {
-    this.connect(this.#port, this.#host, () => { log('TCPClient::connected'); });
+    this.connect(this.#port, this.#host, () => {});
     return this;
   }
 }
