@@ -12,9 +12,9 @@ class TCPServer extends EventEmitter {
 
   #sockets;
 
-
-  constructor({ host, port }) {
+  constructor(host, port) {
     super();
+    if (!host || !port) throw new Error('TCPServer::host or port is undefined');
     this.#host = host;
     this.#port = port;
     this.#sockets = [];

@@ -71,7 +71,7 @@ export default class RemoteMidi extends EventEmitter {
     if (this.#midiInputDeviceName) this.#midiInput = new easymidi.Input(this.#midiInputDeviceName);
     this.#spinnies.add('waiting data');
 
-    const tcpServer = new TCPServer({ host: this.#host, port: this.#port });
+    const tcpServer = new TCPServer(this.#host, this.#port);
     this.#spinnies.succeed('remote midi server is listening');
     tcpServer.on('data', (dataBuffer) => {
       log.info('received message :', dataBuffer.toString());
