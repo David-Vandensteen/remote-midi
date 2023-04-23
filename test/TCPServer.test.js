@@ -1,6 +1,4 @@
 import { expect } from 'chai';
-import sinon from 'sinon';
-import assert from 'assert';
 import net from 'net';
 import { TCPServer } from '#src/lib/tcpServer';
 import mocha from 'mocha';
@@ -10,8 +8,6 @@ const {
   it,
   before,
   after,
-  beforeEach,
-  afterEach,
 } = mocha;
 
 describe('TCPServer', () => {
