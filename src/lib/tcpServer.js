@@ -29,6 +29,7 @@ class TCPServer extends EventEmitter {
       log(`TCPServer::client is connected from : ${sock.remoteAddress}:${sock.remotePort}`);
       this.#sockets.push(sock);
       this.emit('connection', sock);
+      sock.emit('connection', sock);
 
       sock.on('data', (data) => {
         log(`TCPServer::debug DATA ${sock.remoteAddress}: ${data}`);
@@ -48,6 +49,10 @@ class TCPServer extends EventEmitter {
         log(`TCPServer::CLOSED: ${sock.remoteAddress} ${sock.remotePort}`);
       });
     });
+  }
+
+  close() {
+    this.#server.close();
   }
 }
 
