@@ -19,7 +19,7 @@ describe('TCPMidi', () => {
       };
 
       tcpMidi.send('test', message);
-      process.exit(0);
+      // process.exit(0);
     });
   });
 });
