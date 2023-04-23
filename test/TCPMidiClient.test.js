@@ -8,7 +8,7 @@ const { describe, it } = mocha;
 describe('TCPMidi', () => {
   describe('#send', () => {
     it('should send a message with the correct type', (done) => {
-      const tcpMidi = new TCPMidiClient('127.0.0.1', 1234);
+      const tcpMidi = new TCPMidiClient({ host: '127.0.0.1', port: 1234 });
       const message = { id: 1 };
       const expectedMessage = { _type: 'test', id: 1 };
 
@@ -19,7 +19,7 @@ describe('TCPMidi', () => {
       };
 
       tcpMidi.send('test', message);
-      tcpMidi.end();
+      process.exit(0);
     });
   });
 });
