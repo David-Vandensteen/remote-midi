@@ -1,4 +1,4 @@
-import { normalizeMidiMessage } from '#src/remote-midi';
+import { MidiNormalizer } from '#src/index';
 
 const { log } = console;
 
@@ -12,7 +12,7 @@ log('message :');
 log(message);
 log('');
 log('normalized message :');
-log(normalizeMidiMessage(message));
+log(MidiNormalizer.message(message));
 
 message.channel = -10;
 message.controller = -100;
@@ -23,4 +23,4 @@ log('message');
 log(message);
 log('');
 log('normalized message :');
-log(normalizeMidiMessage(message));
+log(MidiNormalizer.message(message));

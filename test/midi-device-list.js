@@ -1,4 +1,4 @@
-import { getInputs, getOutputs } from '#src/remote-midi';
+import { getInputs, getOutputs } from '#src/index';
 
 const { log } = console;
 log('inputs :', getInputs());

@@ -1,5 +1,5 @@
 import { emitKeypressEvents } from 'readline';
-import { rMidiClient } from '#src/remote-midi';
+import { rMidiClient } from '#src/index';
 
 const { log } = console;
 

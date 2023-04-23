@@ -1,30 +1,16 @@
 /* eslint-disable no-underscore-dangle */
-import EventEmitter from 'events';
+import { EventEmitter } from 'events';
 import easymidi from 'easymidi';
 import { log } from '#src/lib/log';
 import { TCPServer } from '#src/lib/tcpServer';
-import { TCPMidi, encode, decode } from '#src/lib/tcpMidi';
-import { normalizeMidiMessage, normalizeMidiValue } from '#src/lib/midiMessageNormalizer';
+import { TCPMidiClient } from '#src/lib/tcpMidiClient';
+import { TCPMessage } from '#src/lib/tcpMessage';
+import { MidiNormalizer } from '#src/lib/midiNormalizer';
 import Spinnies from 'spinnies';
 
-const getAllMidiEvent = () => [
-  'noteoff',
-  'noteon',
-  'poly aftertouch',
-  'cc',
-  'program',
-  'channel aftertouch',
-  'pitch',
-  'position',
-  'select',
-  'clock',
-  'start',
-  'continue',
-  'stop',
-  'reset',
-];
+const { getOutputs, getInputs } = easymidi;
 
-class RemoteMidi extends EventEmitter {
+export default class RemoteMidi extends EventEmitter {
   #host = '127.0.0.1';
 
   #port = '7070';
@@ -52,11 +38,28 @@ class RemoteMidi extends EventEmitter {
     this.#host = host;
     this.#port = port;
     this.#mode = mode;
-    this.#events = getAllMidiEvent();
+    this.#events = RemoteMidi.getMidiEventList();
     this.#spinnies = new Spinnies();
     if (midiOutputDeviceName) this.#midiOutputDeviceName = midiOutputDeviceName;
     if (midiInputDeviceName) this.#midiInputDeviceName = midiInputDeviceName;
   }
+
+  static getMidiEventList = () => [
+    'noteoff',
+    'noteon',
+    'poly aftertouch',
+    'cc',
+    'program',
+    'channel aftertouch',
+    'pitch',
+    'position',
+    'select',
+    'clock',
+    'start',
+    'continue',
+    'stop',
+    'reset',
+  ];
 
   #server() {
     this.#spinnies.add('remote midi server is listening');
@@ -74,7 +77,7 @@ class RemoteMidi extends EventEmitter {
       log.info('received message :', dataBuffer.toString());
       log.info('send the message to midi device', this.#midiOutputDeviceName);
 
-      decode(dataBuffer).map((message) => {
+      TCPMessage.decode(dataBuffer).map((message) => {
         const type = message._type;
         // eslint-disable-next-line no-param-reassign
         delete message._type;
@@ -89,7 +92,7 @@ class RemoteMidi extends EventEmitter {
       tcpServer.on('connection', (socket) => {
         this.#midiInput.on('cc', (message) => {
           log.debug('send message', message);
-          socket.write(encode(message));
+          socket.write(TCPMessage.encode(message));
         });
       });
     }
@@ -98,7 +101,7 @@ class RemoteMidi extends EventEmitter {
 
   #client() {
     this.#spinnies.add('remote midi client is started');
-    this.#tcpMidi = new TCPMidi({ host: this.#host, port: this.#port });
+    this.#tcpMidi = new TCPMidiClient({ host: this.#host, port: this.#port });
     this.#tcpMidi.start();
     this.#spinnies.succeed('remote midi client is started');
     this.#spinnies.add('waiting data to send');
@@ -138,35 +141,28 @@ class RemoteMidi extends EventEmitter {
   start() { if (this.#mode === 'server') return this.#server(); return this.#client(); }
 }
 
-const { getOutputs, getInputs } = easymidi;
+/*
 
-const rMidiClient = ({ host, port }) => {
-  const rMidi = new RemoteMidi({
-    host, port, mode: 'client',
-  });
-  return rMidi;
-};
-
+const rMidiClient = ({ host, port }) => new RemoteMidi({ host, port, mode: 'client' });
 const rMidiServer = ({
-  host, port, midiOutputDeviceName, midiInputDeviceName,
-}) => {
-  const rMidi = new RemoteMidi({
-    host, port, midiOutputDeviceName, midiInputDeviceName, mode: 'server',
-  });
-  return rMidi;
-};
+  host,
+  port,
+  midiOutputDeviceName,
+  midiInputDeviceName,
+}) => new RemoteMidi({
+  host,
+  port,
+  midiOutputDeviceName,
+  midiInputDeviceName,
+  mode: 'server',
+});
+*/
 
-export default RemoteMidi;
 export {
   RemoteMidi,
-  rMidiClient,
-  rMidiServer,
-  getAllMidiEvent,
   easymidi,
   getOutputs,
   getInputs,
-  encode,
-  decode,
-  normalizeMidiMessage,
-  normalizeMidiValue,
+  TCPMessage,
+  MidiNormalizer,
 };
