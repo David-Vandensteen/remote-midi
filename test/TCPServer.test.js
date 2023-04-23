@@ -17,7 +17,7 @@ describe('TCPServer', () => {
     let mockServer;
 
     beforeEach(() => {
-      server = new TCPServer({ host: '127.0.0.1', port: 7070 });
+      server = new TCPServer('127.0.0.1', 7070);
       mockServer = sinon.mock(net.createServer());
     });
 

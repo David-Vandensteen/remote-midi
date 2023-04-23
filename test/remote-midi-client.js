@@ -7,7 +7,7 @@ const velocity = 127;
 const channel = 0;
 const baseNote = 96;
 
-const client = rMidiClient({ host: '127.0.0.1', port: 7070 });
+const client = rMidiClient('127.0.0.1', 7070);
 client.start();
 
 log('press a z e r t y u i to send midi note C D E F G A B C ');
