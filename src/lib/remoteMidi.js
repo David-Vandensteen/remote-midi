@@ -31,17 +31,16 @@ export default class RemoteMidi extends EventEmitter {
 
   #spinnies;
 
-  constructor({
-    host, port, midiOutputDeviceName, midiInputDeviceName, mode,
-  }) {
+  constructor(host, port, mode, options) {
     super();
+    if (!host || !port || !mode) throw new Error('remoteMidi::host, port or mode is undefined');
     this.#host = host;
     this.#port = port;
     this.#mode = mode;
     this.#events = RemoteMidi.getMidiEventList();
     this.#spinnies = new Spinnies();
-    if (midiOutputDeviceName) this.#midiOutputDeviceName = midiOutputDeviceName;
-    if (midiInputDeviceName) this.#midiInputDeviceName = midiInputDeviceName;
+    if (options?.midiOutputDeviceName) this.#midiOutputDeviceName = options?.midiOutputDeviceName;
+    if (options?.midiInputDeviceName) this.#midiInputDeviceName = options?.midiInputDeviceName;
   }
 
   static getMidiEventList = () => [
@@ -101,7 +100,7 @@ export default class RemoteMidi extends EventEmitter {
 
   #client() {
     this.#spinnies.add('remote midi client is started');
-    this.#tcpMidi = new TCPMidiClient({ host: this.#host, port: this.#port });
+    this.#tcpMidi = new TCPMidiClient(this.#host, this.#port);
     this.#tcpMidi.start();
     this.#spinnies.succeed('remote midi client is started');
     this.#spinnies.add('waiting data to send');
@@ -140,23 +139,6 @@ export default class RemoteMidi extends EventEmitter {
 
   start() { if (this.#mode === 'server') return this.#server(); return this.#client(); }
 }
-
-/*
-
-const rMidiClient = ({ host, port }) => new RemoteMidi({ host, port, mode: 'client' });
-const rMidiServer = ({
-  host,
-  port,
-  midiOutputDeviceName,
-  midiInputDeviceName,
-}) => new RemoteMidi({
-  host,
-  port,
-  midiOutputDeviceName,
-  midiInputDeviceName,
-  mode: 'server',
-});
-*/
 
 export {
   RemoteMidi,

@@ -7,8 +7,9 @@ export default class TCPClient extends net.Socket {
 
   #port = 7070;
 
-  constructor({ host, port }) {
+  constructor(host, port) {
     super();
+    if (!host || !port) throw new Error('TCPClient::host or port is undefined');
     this.#host = host;
     this.#port = port;
   }
