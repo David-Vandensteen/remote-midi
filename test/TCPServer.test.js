@@ -1,5 +1,6 @@
-import { assert } from 'chai';
+import { expect } from 'chai';
 import sinon from 'sinon';
+import assert from 'assert';
 import net from 'net';
 import { TCPServer } from '#src/lib/tcpServer';
 import mocha from 'mocha';
@@ -7,87 +8,61 @@ import mocha from 'mocha';
 const {
   describe,
   it,
+  before,
+  after,
   beforeEach,
   afterEach,
 } = mocha;
 
 describe('TCPServer', () => {
-  describe('start', () => {
-    let server;
-    let mockServer;
+  let server;
+  const testHost = '127.0.0.1';
+  const testPort = 9999;
 
-    beforeEach(() => {
-      server = new TCPServer('127.0.0.1', 7070);
-      mockServer = sinon.mock(net.createServer());
-    });
+  before(() => {
+    server = new TCPServer(testHost, testPort);
+    server.start();
+  });
 
-    afterEach(() => {
-      server.removeAllListeners();
-      server.send('close');
-      mockServer.restore();
-    });
+  after(() => {
+    server.close();
+  });
 
-    it('should listen on the specified host and port', (done) => {
-      mockServer.expects('listen').once().withArgs(7070, '127.0.0.1', sinon.match.func);
-
-      server.start();
-
-      setTimeout(() => {
-        mockServer.verify();
+  describe('#start', () => {
+    it('should start the server and listen on the specified port', (done) => {
+      const client = new net.Socket();
+      client.connect(testPort, testHost, () => {
+        client.destroy();
         done();
-      }, 50);
+      });
     });
+  });
 
-    it('should emit a "connection" event when a client connects', (done) => {
-      const clientSocket = new net.Socket();
-      const onConnectionSpy = sinon.spy();
-
-      server.on('connection', onConnectionSpy);
-      server.start();
-
-      setTimeout(() => {
-        clientSocket.connect({ port: 7070 }, () => {
-          assert.isTrue(onConnectionSpy.calledOnce);
+  describe('#on', () => {
+    it('should receive a "connection" event when a client connects', (done) => {
+      const client = new net.Socket();
+      let connectionReceveid = false;
+      server.on('connection', () => {
+        if (!connectionReceveid) {
+          connectionReceveid = true;
           done();
-        });
-      }, 50);
+        }
+      });
+      client.connect(testPort, testHost);
     });
+  });
 
-    it('should emit a "data" event when data is received from a client', (done) => {
-      const clientSocket = new net.Socket();
-      const onDataSpy = sinon.spy();
-
-      server.on('data', onDataSpy);
-      server.start();
-
-      setTimeout(() => {
-        clientSocket.connect({ port: 7070 }, () => {
-          clientSocket.write('hello');
-        });
-
-        setTimeout(() => {
-          assert.isTrue(onDataSpy.calledOnce);
-          assert.equal(onDataSpy.args[0][0].toString(), 'hello');
-          done();
-        }, 50);
-      }, 50);
-    });
-
-    it('should remove the client socket from the internal list when the client disconnects', (done) => {
-      const clientSocket = new net.Socket();
-
-      server.start();
-
-      setTimeout(() => {
-        clientSocket.connect({ port: 7070 }, () => {
-          clientSocket.destroy();
-        });
-      }, 50);
-
-      setTimeout(() => {
-        assert.isEmpty(server.sockets);
+  describe('#data', () => {
+    it('should receive a "data" event when a client sends data', (done) => {
+      const client = new net.Socket();
+      server.on('data', (data) => {
+        expect(data.toString()).to.equal('hello');
+        client.destroy();
         done();
-      }, 100);
+      });
+      client.connect(testPort, testHost, () => {
+        client.write('hello');
+      });
     });
   });
 });

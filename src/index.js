@@ -9,19 +9,8 @@ import {
   MidiNormalizer,
 } from '#src/lib/remoteMidi';
 
-const rMidiClient = ({ host, port }) => FactoryService.rMidiClient({ host, port });
-
-const rMidiServer = ({
-  host,
-  port,
-  midiOutputDeviceName,
-  midiInputDeviceName,
-}) => FactoryService.rMidiServer({
-  host,
-  port,
-  midiOutputDeviceName,
-  midiInputDeviceName,
-});
+const rMidiClient = (host, port, options) => FactoryService.rMidiClient(host, port, options);
+const rMidiServer = (host, port, options) => FactoryService.rMidiServer(host, port, options);
 
 export {
   RemoteMidi,
