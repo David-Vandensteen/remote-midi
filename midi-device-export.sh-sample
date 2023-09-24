@@ -1,0 +1,4 @@
+# chmod +x midi-device-export.sh
+# source ./midi-device-export.sh
+export in="Gestionnaire IAC Bus 1"
+export out="Gestionnaire IAC Bus 1"
