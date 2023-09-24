@@ -6,7 +6,7 @@ const syncWait = (ms) => {
   while (Date.now() < end) () => 0;
 };
 
-const midi = new easymidi.Output('server-midi');
+const midi = new easymidi.Output(process.env.out);
 
 const velocity = 127;
 const channel = 0;
