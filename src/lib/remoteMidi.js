@@ -31,16 +31,16 @@ export default class RemoteMidi extends EventEmitter {
 
   #spinnies;
 
-  constructor(host, port, mode, options) {
+  constructor(host, port, options) {
     super();
-    if (!host || !port || !mode) throw new Error('remoteMidi::host, port or mode is undefined');
+    if (!host) throw new Error('remoteMidi::host is undefeined');
+    if (!port) throw new Error('remoteMidi::port is undefined');
     this.#host = host;
     this.#port = port;
-    this.#mode = mode;
     this.#events = RemoteMidi.getMidiEventList();
     this.#spinnies = new Spinnies();
-    if (options?.midiOutputDeviceName) this.#midiOutputDeviceName = options?.midiOutputDeviceName;
-    if (options?.midiInputDeviceName) this.#midiInputDeviceName = options?.midiInputDeviceName;
+    if (options?.midiOut) this.#midiOutputDeviceName = options?.midiOut;
+    if (options?.midiIn) this.#midiInputDeviceName = options?.midiIn;
   }
 
   static getMidiEventList = () => [
@@ -65,6 +65,8 @@ export default class RemoteMidi extends EventEmitter {
     log.info('available output midi devices :', easymidi.getOutputs().toString());
     log.info('selected output midi device name:', this.#midiOutputDeviceName);
     log.info('selected input midi device name:', this.#midiInputDeviceName);
+
+    this.#mode = 'server';
 
     this.#midiOutput = new easymidi.Output(this.#midiOutputDeviceName);
     if (this.#midiInputDeviceName) this.#midiInput = new easymidi.Input(this.#midiInputDeviceName);
@@ -99,6 +101,7 @@ export default class RemoteMidi extends EventEmitter {
   }
 
   #client() {
+    this.#mode = 'client';
     this.#spinnies.add('remote midi client is started');
     this.#tcpMidi = new TCPMidiClient(this.#host, this.#port);
     this.#tcpMidi.start();
@@ -137,7 +140,9 @@ export default class RemoteMidi extends EventEmitter {
   }
   */
 
-  start() { if (this.#mode === 'server') return this.#server(); return this.#client(); }
+  connect() { return this.#client(); }
+
+  serve() { return this.#server(); }
 }
 
 export {

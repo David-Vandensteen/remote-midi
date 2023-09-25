@@ -1,8 +1,8 @@
 import { RemoteMidi } from '#src/index';
 
-const client = new RemoteMidi('127.0.0.1', 7070, 'client');
+const client = new RemoteMidi('127.0.0.1', 7070);
 client
-  .start()
+  .connect()
   .send('cc', {
     controller: 30,
     value: 32,
