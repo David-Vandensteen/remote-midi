@@ -5,8 +5,8 @@ const server = new RemoteMidi(
   7070,
   'server',
   {
-    midiOutputDeviceName: process.env.out,
-    midiInputDeviceName: process.env.in,
+    midiOutputDeviceName: process.env.MIDI_OUT,
+    midiInputDeviceName: process.env.MIDI_IN,
   },
 );
 
