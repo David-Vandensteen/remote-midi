@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import appRootPath from 'app-root-path';
 import Params from '#src/lib/params';
 import easymidi from 'easymidi';
-import { FactoryService } from '#src/service/factoryService';
+import { RemoteMidi } from '#src/index';
 
 const { readJSONSync } = fs;
 const { resolve } = appRootPath;
@@ -35,15 +35,16 @@ if (
 ) Params.help();
 
 if (params.mode === 'server') {
-  const server = FactoryService.rMidiServer({
-    host: params.host,
-    port: params.port,
-    midiDeviceId: params.id,
-  });
+  const server = new RemoteMidi(
+    params.host,
+    params.port,
+    'server',
+    { midiOutputDeviceName: params.id },
+  );
   server.start();
 }
 
 if (params.mode === 'client') {
-  const client = FactoryService.rMidiClient({ host: params.host, port: params.port });
+  const client = new RemoteMidi(params.host, params.port, 'client');
   client.start();
 }

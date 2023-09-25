@@ -1,7 +1,7 @@
-import { rMidiClient } from '#src/index';
+import { RemoteMidi } from '#src/index';
 
 const { log } = console;
-const client = rMidiClient('127.0.0.1', 7070);
+const client = new RemoteMidi('127.0.0.1', 7070, 'client');
 client
   .start()
   .on('data', () => log)

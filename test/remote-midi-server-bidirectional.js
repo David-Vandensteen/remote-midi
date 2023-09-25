@@ -1,4 +1,13 @@
-import { rMidiServer } from '#src/index';
+import { RemoteMidi } from '#src/index';
 
-const server = rMidiServer('0.0.0.0', 7070, { midiOutputDeviceName: process.env.out, midiInputDeviceName: process.env.in });
+const server = new RemoteMidi(
+  '0.0.0.0',
+  7070,
+  'server',
+  {
+    midiOutputDeviceName: process.env.out,
+    midiInputDeviceName: process.env.in,
+  },
+);
+
 server.start();
