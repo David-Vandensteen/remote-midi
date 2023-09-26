@@ -61,19 +61,19 @@ export default class RemoteMidi extends EventEmitter {
   ];
 
   #server() {
-    this.#spinnies.add('remote midi server is listening');
+    this.#spinnies.add('remote midi master is listening');
     log.info('available output midi devices :', easymidi.getOutputs().toString());
     log.info('selected output midi device name:', this.#midiOutputDeviceName);
     log.info('selected input midi device name:', this.#midiInputDeviceName);
 
-    this.#mode = 'server';
+    this.#mode = 'master';
 
     this.#midiOutput = new easymidi.Output(this.#midiOutputDeviceName);
     if (this.#midiInputDeviceName) this.#midiInput = new easymidi.Input(this.#midiInputDeviceName);
     this.#spinnies.add('waiting data');
 
     const tcpServer = new TCPServer(this.#host, this.#port);
-    this.#spinnies.succeed('remote midi server is listening');
+    this.#spinnies.succeed('remote midi master is listening');
     tcpServer.on('data', (dataBuffer) => {
       log.info('received message :', dataBuffer.toString());
       log.info('send the message to midi device', this.#midiOutputDeviceName);
@@ -101,15 +101,15 @@ export default class RemoteMidi extends EventEmitter {
   }
 
   #client() {
-    this.#mode = 'client';
-    this.#spinnies.add('remote midi client is started');
+    this.#mode = 'slave';
+    this.#spinnies.add('remote midi slave is started');
     this.#tcpMidi = new TCPMidiClient(this.#host, this.#port);
     this.#tcpMidi.start();
-    this.#spinnies.succeed('remote midi client is started');
+    this.#spinnies.succeed('remote midi slave is started');
     this.#spinnies.add('waiting data to send');
     this.#tcpMidi.on('data', (message) => {
       log.info('received message', message.toString());
-      this.emit('data', message);
+      this.emit('data', message.toString());
     });
     return this;
   }
@@ -121,24 +121,20 @@ export default class RemoteMidi extends EventEmitter {
 
   send(type, message) { this.#tcpMidi.send(type, message); }
 
-  /*
-  mirror({ midiDeviceName }) {
-    this.#midiDeviceName = midiDeviceName;
-    // TODO :  refactor with midi device name
-    this.#midiDeviceId = midiDeviceId;
-    log.title(`mirror input device id ${midiDeviceId}`);
-    log.info('input midi device :', easymidi.getInputs()[this.#midiDeviceId].toString());
-    log.info('midi events to transport :', this.#events);
-
-    this.#midiInput = new easymidi.Input(easymidi.getInputs()[this.#midiDeviceId].toString());
-    this.#events.map(
-      (eventName) => this.#midiInput.on(eventName, (message) => this.#tcpMidi.send(message)),
-    );
-
-    log('');
+  repeatFromMasterToMidiDevice(midiDevice) {
+    if (this.#midiOutput === undefined) {
+      this.#midiOutput = new easymidi.Output(midiDevice);
+    }
+    this.on('data', (jsonMidiMessage) => {
+      const [midiMessage] = JSON.parse(jsonMidiMessage);
+      log.info('repeat to midi device :', midiDevice, midiMessage);
+      const type = midiMessage._type;
+      // eslint-disable-next-line no-param-reassign
+      delete midiMessage._type;
+      this.#midiOutput.send(type, midiMessage);
+    });
     return this;
   }
-  */
 
   connect() { return this.#client(); }
 
