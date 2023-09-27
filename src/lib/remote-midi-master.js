@@ -16,8 +16,6 @@ export default class RemoteMidiMaster extends EventEmitter {
   #spinnies;
   #node = undefined;
   #midiDevice = undefined;
-  #easyMidiIn = [];
-  #easyMidiOut = [];
   #nodes = [];
 
   constructor(host, port) {
@@ -51,13 +49,12 @@ export default class RemoteMidiMaster extends EventEmitter {
         midiDevice,
       },
     });
-    log.debug(this.#binders);
-    log.info('set bind from', this.#node, this.#midiDevice, 'to', node, midiDevice);
     return this;
   }
 
   serve() {
     this.#spinnies.add(`master ${RemoteMidiMaster.hostname} is started`);
+    this.#spinnies.add('waiting a connection to apply bind');
 
     this.on('data', (message) => {
       log.info('master received message from event emitter :', JSON.stringify(message));
@@ -73,12 +70,17 @@ export default class RemoteMidiMaster extends EventEmitter {
     tcpServer.on('connection', (socket) => {
       this.#spinnies.succeed('waiting a slave connection');
       this.#socket = socket;
+
       this.#binders.forEach((binder) => {
-        console.log(binder);
-        if (binder.from.node === RemoteMidiMaster.hostname) {
-          midiBinderService(binder.from.midiDevice, this.#socket);
+        if (
+          binder.from.node === RemoteMidiMaster.hostname
+          && binder.to.node !== RemoteMidiMaster.hostname
+        ) {
+          log.info('set bind from', binder.from.node, binder.from.midiDevice, 'to', binder.to.node, binder.to.midiDevice);
+          midiBinderService(binder.from.midiDevice, { tcpSocket: this.#socket });
         }
       });
+      this.#spinnies.succeed('waiting a connection to apply bind');
     });
 
     tcpServer.on('data', (dataBuffer) => {

@@ -2,7 +2,7 @@ import easymidi from 'easymidi';
 import easymidiEventList from '#src/lib/easymidi-event-list';
 import { TCPMessage } from '#src/lib/remoteMidi';
 
-export default (midiFrom, socket, options) => {
+export default (midiFrom, options) => {
   let midiOut;
   let events = easymidiEventList();
   const midiIn = new easymidi.Input(midiFrom);
@@ -18,7 +18,7 @@ export default (midiFrom, socket, options) => {
         midiOut.send(event, message);
       } else {
         console.log('to TCP');
-        socket.write(TCPMessage.encode(message));
+        options.tcpSocket.write(TCPMessage.encode(message));
       }
     });
   });
