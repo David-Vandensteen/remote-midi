@@ -1,6 +1,7 @@
 /* eslint-disable lines-between-class-members */
 import { EventEmitter } from 'events';
 import easymidi from 'easymidi';
+import getEasyMidiEvents from '#src/lib/easymidi-event-list';
 import { TCPServer } from '#src/lib/tcpServer';
 import { TCPMessage } from '#src/lib/tcpMessage';
 import midiBinderService from '#src/service/midi-binder';
@@ -16,6 +17,7 @@ export default class RemoteMidiMaster extends EventEmitter {
   #spinnies;
   #node = undefined;
   #midiDevice = undefined;
+  #events = getEasyMidiEvents();
   #nodes = [];
 
   constructor(host, port) {
@@ -32,9 +34,11 @@ export default class RemoteMidiMaster extends EventEmitter {
 
   static get hostname() { return `${hostname}`; }
 
-  bind(node, midiDevice) {
+  bind(node, midiDevice, options) {
     this.#node = node;
     this.#midiDevice = midiDevice;
+    if (options?.events) this.#events = options.events;
+
     return this;
   }
 
@@ -44,6 +48,7 @@ export default class RemoteMidiMaster extends EventEmitter {
         node: this.#node,
         midiDevice: this.#midiDevice,
       },
+      events: this.#events,
       to: {
         node,
         midiDevice,
@@ -77,7 +82,10 @@ export default class RemoteMidiMaster extends EventEmitter {
           && binder.to.node !== RemoteMidiMaster.hostname
         ) {
           log.info('set bind from', binder.from.node, binder.from.midiDevice, 'to', binder.to.node, binder.to.midiDevice);
-          midiBinderService(binder.from.midiDevice, { tcpSocket: this.#socket });
+          midiBinderService(
+            binder.from.midiDevice,
+            { events: binder?.events, tcpSocket: this.#socket },
+          );
         }
       });
       this.#spinnies.succeed('waiting a connection to apply bind');
