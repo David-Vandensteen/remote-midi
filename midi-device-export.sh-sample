@@ -2,3 +2,9 @@
 # source ./midi-device-export.sh
 export MIDI_IN="Gestionnaire IAC Bus 1"
 export MIDI_OUT="Gestionnaire IAC Bus 1"
+
+export MIDI_SLAVE_HOST="192.168.0.170"
+
+#export MIDI_BIND_TO_HOSTNAME="iMac-de-davidv.local"
+export MIDI_BIND_FROM_DEVICE="Gestionnaire IAC Bus 1"
+export MIDI_BIND_TO_DEVICE="Gestionnaire IAC Bus 2"
