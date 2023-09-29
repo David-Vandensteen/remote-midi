@@ -64,7 +64,8 @@ export default class RemoteMidiSlave extends EventEmitter {
             const midiOut = new easymidi.Output(binder.to.midiDevice);
             this.on('data', (midiMessage) => {
               log.info('send to', binder.to.midiDevice);
-              midiOut.send(midiMessage);
+              // eslint-disable-next-line no-underscore-dangle
+              midiOut.send(midiMessage._type, midiMessage);
             });
           }
         });
