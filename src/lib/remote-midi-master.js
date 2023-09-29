@@ -57,7 +57,7 @@ export default class RemoteMidiMaster extends EventEmitter {
     this.#spinnies.add('waiting a connection to apply bind');
 
     this.on('data', (message) => {
-      log.info('master received message from event emitter :', JSON.stringify(message));
+      if (process.env.NODE_ENV === 'DEV') log.info('master received message from event emitter :', JSON.stringify(message));
       if (message?.header === 'announce') {
         log.info('slave', message.node, 'announce', message.midiDevices);
         this.#nodes.push({ node: message.node, midiDevices: message.midiDevices });
@@ -84,10 +84,10 @@ export default class RemoteMidiMaster extends EventEmitter {
     });
 
     tcpServer.on('data', (dataBuffer) => {
-      log.info('master received tcp messages :', dataBuffer.toString());
+      if (process.env.NODE_ENV === 'DEV') log.info('master received tcp messages :', dataBuffer.toString());
 
       TCPMessage.decode(dataBuffer).map((message) => {
-        log.info('master emit message :', JSON.stringify(message));
+        if (process.env.NODE_ENV === 'DEV') log.info('master emit message :', JSON.stringify(message));
         this.emit('data', message);
         return message;
       });

@@ -12,12 +12,12 @@ export default (midiFrom, options) => {
 
   events.forEach((event) => {
     midiIn.on(event, (message) => {
-      console.log('send message', message, 'from', midiFrom);
+      if (process.env.NODE_ENV === 'DEV') console.log('send message', message, 'from', midiFrom);
       if (midiOut) {
-        console.log('to', options.midiTo);
+        if (process.env.NODE_ENV === 'DEV') console.log('to', options.midiTo);
         midiOut.send(event, message);
       } else {
-        console.log('to TCP');
+        if (process.env.NODE_ENV === 'DEV') console.log('to TCP');
         options.tcpSocket.write(TCPMessage.encode(message));
       }
     });

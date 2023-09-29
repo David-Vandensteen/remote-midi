@@ -20,9 +20,11 @@ export default class RemoteMidiSlave extends EventEmitter {
     this.#host = host;
     this.#port = port;
     this.#spinnies = new Spinnies();
-    log.info('slave id is :', RemoteMidiSlave.hostname);
-    log.info('available output midi devices on slave :', easymidi.getOutputs().toString());
-    log.info('available input midi devices on slave :', easymidi.getInputs().toString());
+    if (process.env.NODE_ENV === 'DEV') {
+      log.info('slave id is :', RemoteMidiSlave.hostname);
+      log.info('available output midi devices on slave :', easymidi.getOutputs().toString());
+      log.info('available input midi devices on slave :', easymidi.getInputs().toString());
+    }
   }
 
   static get hostname() { return `${hostname}`; }
@@ -40,7 +42,7 @@ export default class RemoteMidiSlave extends EventEmitter {
     });
 
     this.#tcpMidiClient.on('data', (dataBuffer) => {
-      log.info('slave received message', dataBuffer.toString());
+      if (process.env.NODE_ENV === 'DEV') log.info('slave received message', dataBuffer.toString());
       TCPMessage.decode(dataBuffer).map((message) => {
         this.emit('data', message);
         return message;
@@ -48,7 +50,7 @@ export default class RemoteMidiSlave extends EventEmitter {
     });
 
     this.on('data', (message) => {
-      log.info('data emit received', JSON.stringify(message));
+      if (process.env.NODE_ENV === 'DEV') log.info('data emit received', JSON.stringify(message));
       // if (message.header === 'bind') {
       //   if (
       //     binder.from.node === RemoteMidiMaster.hostname
@@ -63,7 +65,7 @@ export default class RemoteMidiSlave extends EventEmitter {
           if (binder.to.node === RemoteMidiSlave.hostname) {
             const midiOut = new easymidi.Output(binder.to.midiDevice);
             this.on('data', (midiMessage) => {
-              log.info('send to', binder.to.midiDevice);
+              if (process.env.NODE_ENV === 'DEV') log.info('send to', binder.to.midiDevice);
               // eslint-disable-next-line no-underscore-dangle
               midiOut.send(midiMessage._type, midiMessage);
             });
