@@ -10,6 +10,7 @@ const bindToHostname = process.env.MIDI_BIND_TO_HOSTNAME ?? 'UNKNOW';
 const bindToDevice = process.env.MIDI_BIND_TO_DEVICE;
 
 new RemoteMidiMaster(masterHost, masterPort)
-  .bind(bindFromHostname, bindFromDevice)
+  // .bind(bindFromHostname, bindFromDevice) // bind all event type
+  .bind(bindFromHostname, bindFromDevice, { events: RemoteMidiMaster.getEventList().filter((event) => event !== 'clock') })
   .to(bindToHostname, bindToDevice)
   .serve();

@@ -34,6 +34,8 @@ export default class RemoteMidiMaster extends EventEmitter {
 
   static get hostname() { return `${hostname}`; }
 
+  static getEventList() { return getEasyMidiEvents(); }
+
   bind(node, midiDevice, options) {
     this.#node = node;
     this.#midiDevice = midiDevice;
