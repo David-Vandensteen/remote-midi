@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import { hostname } from 'os';
 import easymidi from 'easymidi';
 import getEasyMidiEvents from '#src/lib/easymidi-event-list';
+import { EasymidiListener } from '#src/lib/easymidi-listener';
 import { log } from '#src/lib/log';
 import Spinnies from 'spinnies';
 
@@ -46,6 +47,17 @@ export default class RemoteMidi extends EventEmitter {
   }
 
   static get hostname() { return `${hostname}`; }
+
+  register() {
+    if (this.midiIn) {
+      const easymidiListener = new EasymidiListener(this.midiInInstance, this.events);
+
+      easymidiListener.on('all', (message) => {
+        if (process.env.NODE_ENV === 'dev') log.debug('easymidi emit on channel named all', message);
+        this.emit('data', message);
+      });
+    }
+  }
 }
 
 export { RemoteMidi };

@@ -8,7 +8,7 @@ new RemoteMidiSlave(
   slavePort,
   {
     midi:
-    { in: process.env.MIDI_IN, out: process.env.MIDI_OUT, events: ['cc'] },
+    { in: process.env.MIDI_SLAVE_IN, out: process.env.MIDI_SLAVE_OUT, events: ['cc'] },
   },
 )
   .connect();

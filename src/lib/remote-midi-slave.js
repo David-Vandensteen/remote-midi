@@ -1,8 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { RemoteMidi } from '#src/lib/remote-midi';
 import easymidi from 'easymidi';
-import { EasymidiListener } from '#src/lib/easymidi-listener';
-import { hostname } from 'os';
 import { TCPMidiClient } from '#src/lib/tcpMidiClient';
 import { TCPMessage } from '#src/lib/tcpMessage';
 import { log } from '#src/lib/log';
@@ -10,9 +8,8 @@ import { log } from '#src/lib/log';
 export default class RemoteMidiSlave extends RemoteMidi {
   #tcpMidiClient;
 
-  static get hostname() { return `${hostname}`; }
-
   connect() {
+    this.register();
     this.spinnies.add(`slave ${RemoteMidiSlave.hostname} connect to master ${this.host}`);
     this.#tcpMidiClient = new TCPMidiClient(this.host, this.port);
     this.#tcpMidiClient.start();
@@ -37,13 +34,6 @@ export default class RemoteMidiSlave extends RemoteMidi {
     });
 
     if (this.midiIn) {
-      const easymidiListener = new EasymidiListener(this.midiInInstance, this.events);
-
-      easymidiListener.on('all', (message) => {
-        if (process.env.NODE_ENV === 'dev') log.debug('easymidi emit on channel named all', message);
-        this.emit('data', message);
-      });
-
       this.on('data', (message) => {
         if (!message?.header) {
           this.#tcpMidiClient.write(TCPMessage.encode(message));
@@ -53,15 +43,6 @@ export default class RemoteMidiSlave extends RemoteMidi {
 
     this.on('data', (message) => {
       if (process.env.NODE_ENV === 'dev') log.info('data emit received', JSON.stringify(message));
-      // if (message.header === 'bind') {
-      //   if (
-      //     binder.from.node === RemoteMidiMaster.hostname
-      //     && binder.to.node !== RemoteMidiMaster.hostname
-      //   ) {
-      //     log.info('set bind from', binder.from.node, binder.from.midiDevice, 'to', binder.to.node, binder.to.midiDevice);
-      //     midiBinderService(binder.from.midiDevice, { tcpSocket: this.#socket });
-      //   }
-      // }
       if (message.header === 'bind') {
         message.bind.forEach((binder) => {
           if (binder.to.node === RemoteMidiSlave.hostname) {
