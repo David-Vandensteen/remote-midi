@@ -1,0 +1,16 @@
+export default () => [
+  'noteoff',
+  'noteon',
+  'poly aftertouch',
+  'cc',
+  'program',
+  'channel aftertouch',
+  'pitch',
+  'position',
+  'select',
+  'clock',
+  'start',
+  'continue',
+  'stop',
+  'reset',
+];

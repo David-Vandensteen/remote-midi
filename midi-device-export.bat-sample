@@ -1,0 +1,3 @@
+set MIDI_BIND_TO_HOSTNAME=iMac-de-davidv.local
+set MIDI_BIND_FROM_DEVICE=TR
+set MIDI_BIND_TO_DEVICE=Gestionnaire IAC Bus 1
