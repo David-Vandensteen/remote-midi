@@ -12,3 +12,18 @@ new RemoteMidiSlave(
   },
 )
   .connect();
+
+// const remoteMidiSlave = new RemoteMidiSlave(
+//   slaveHost,
+//   slavePort,
+//   {
+//     midi:
+//     { in: process.env.MIDI_SLAVE_IN, out: process.env.MIDI_SLAVE_OUT, events: ['cc'] },
+//   },
+// );
+
+// remoteMidiSlave.on('connection', (slave) => {
+//   slave.sendMidiOverTCP('cc', { controller: 37, value: 80 });
+// });
+
+// remoteMidiSlave.connect();

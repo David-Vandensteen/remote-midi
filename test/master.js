@@ -24,3 +24,18 @@ new RemoteMidiMaster(
   },
 )
   .serve();
+
+// const remoteMidiMaster = new RemoteMidiMaster(
+//   masterHost,
+//   masterPort,
+//   {
+//     midi:
+//     { in: process.env.MIDI_MASTER_IN, out: process.env.MIDI_MASTER_OUT, events: ['cc'] },
+//   },
+// );
+
+// remoteMidiMaster.on('connection', (master) => {
+//   master.sendMidiOverTCP('cc', { controller: 10, value: 10 });
+// });
+
+// remoteMidiMaster.serve();
