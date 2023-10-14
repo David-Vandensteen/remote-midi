@@ -2,6 +2,7 @@
 import { RemoteMidi } from '#src/lib/remote-midi';
 import { TCPServer } from '#src/lib/tcpServer';
 import { TCPMessage } from '#src/lib/tcpMessage';
+import getEasyMidiEvents from '#src/lib/easymidi-event-list';
 // import midiBinderService from '#src/service/midi-binder';
 import { log } from '#src/lib/log';
 
@@ -12,62 +13,34 @@ export default class RemoteMidiMaster extends RemoteMidi {
   #midiDevice = undefined;
   #nodes = [];
 
-  // bind(node, midiDevice, options) {
-  //   this.#node = node;
-  //   this.#midiDevice = midiDevice;
-  //   if (options?.events) this.events = options.events;
-
-  //   return this;
-  // }
-
-  // to(node, midiDevice) {
-  //   this.#binders.push({
-  //     from: {
-  //       node: this.#node,
-  //       midiDevice: this.#midiDevice,
-  //     },
-  //     events: this.events,
-  //     to: {
-  //       node,
-  //       midiDevice,
-  //     },
-  //   });
-  //   return this;
-  // }
-
   serve() {
     this.register();
     this.spinnies.add(`master ${RemoteMidiMaster.hostname} is started`);
     // this.spinnies.add('waiting a connection to apply bind');
 
-    this.on('data', (message) => {
-      if (process.env.NODE_ENV === 'dev') log.info('master received message from event emitter :', JSON.stringify(message));
-      if (message?.header === 'announce') {
-        log.info('slave', message.node, 'announce', message.midiDevices);
-        this.#nodes.push({ node: message.node, midiDevices: message.midiDevices });
-        this.#socket.write(TCPMessage.encode({ header: 'bind', bind: this.#binders }));
-      }
+    getEasyMidiEvents().forEach((event) => {
+      this.on(event, (message) => {
+        console.log('TODO master send message', message, 'from event', event);
+        if (this.#socket) this.#socket.write(TCPMessage.encode(message));
+      });
     });
+
+    // this.on('data', (message) => {
+    //   if (process.env.NODE_ENV === 'dev') log.info('master received message from event emitter :', JSON.stringify(message));
+    //   if (message?.header === 'announce') {
+    //     log.info('slave', message.node, 'announce', message.midiDevices);
+    //     this.#nodes.push({ node: message.node, midiDevices: message.midiDevices });
+    //     this.#socket.write(TCPMessage.encode({ header: 'bind', bind: this.#binders }));
+    //   } else {
+    //     console.log('TODO master send message');
+    //   }
+    // });
 
     const tcpServer = new TCPServer(this.host, this.port);
 
     tcpServer.on('connection', (socket) => {
       this.spinnies.succeed('waiting a slave connection');
       this.#socket = socket;
-
-      // this.#binders.forEach((binder) => {
-      //   if (
-      //     binder.from.node === RemoteMidiMaster.hostname
-      //     && binder.to.node !== RemoteMidiMaster.hostname
-      //   ) {
-      //     log.info('set bind from', binder.from.node, binder.from.midiDevice, 'to', binder.to.node, binder.to.midiDevice);
-      //     midiBinderService(
-      //       binder.from.midiDevice,
-      //       { events: binder?.events, tcpSocket: this.#socket },
-      //     );
-      //   }
-      // });
-      // this.spinnies.succeed('waiting a connection to apply bind');
     });
 
     tcpServer.on('data', (dataBuffer) => {

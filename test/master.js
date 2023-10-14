@@ -15,12 +15,15 @@ const bindToDevice = process.env.MIDI_BIND_TO_DEVICE;
 // .to(bindToHostname, bindToDevice)
 //  .serve();
 
-new RemoteMidiMaster(
+const master = new RemoteMidiMaster(
   masterHost,
   masterPort,
   {
     midi:
     { in: process.env.MIDI_MASTER_IN, out: process.env.MIDI_MASTER_OUT, events: ['cc'] },
   },
-)
-  .serve();
+);
+
+master
+  .serve()
+  .send('cc', { message: 'hello' });

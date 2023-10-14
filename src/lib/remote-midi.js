@@ -4,8 +4,11 @@ import { hostname } from 'os';
 import easymidi from 'easymidi';
 import getEasyMidiEvents from '#src/lib/easymidi-event-list';
 import { EasymidiListener } from '#src/lib/easymidi-listener';
+import { MidiNormalizer } from '#src/lib/midiNormalizer';
 import { log } from '#src/lib/log';
 import Spinnies from 'spinnies';
+
+const { getOutputs, getInputs } = easymidi;
 
 export default class RemoteMidi extends EventEmitter {
   host = undefined;
@@ -58,6 +61,16 @@ export default class RemoteMidi extends EventEmitter {
       });
     }
   }
+  send(midiType, message) {
+    this.emit(midiType, message);
+    return this;
+  }
 }
 
-export { RemoteMidi };
+export {
+  easymidi,
+  RemoteMidi,
+  getInputs,
+  getOutputs,
+  MidiNormalizer,
+};

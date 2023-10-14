@@ -15,8 +15,6 @@ export default class RemoteMidiSlave extends RemoteMidi {
     this.#tcpMidiClient.start();
     this.spinnies.succeed(`slave ${RemoteMidiSlave.hostname} connect to master ${this.host}`);
 
-    this.#tcpMidiClient.write(TCPMessage.encode({ header: 'announce', node: `'${RemoteMidiSlave.hostname}`, midiDevices: [] }));
-
     this.#tcpMidiClient.on('connection', (message) => {
       log.info('slave connection message', message.toString());
     });
@@ -43,17 +41,6 @@ export default class RemoteMidiSlave extends RemoteMidi {
 
     this.on('data', (message) => {
       if (process.env.NODE_ENV === 'dev') log.info('data emit received', JSON.stringify(message));
-      if (message.header === 'bind') {
-        message.bind.forEach((binder) => {
-          if (binder.to.node === RemoteMidiSlave.hostname) {
-            const midiOut = new easymidi.Output(binder.to.midiDevice);
-            this.on('data', (midiMessage) => {
-              if (process.env.NODE_ENV === 'dev') log.info('send to', binder.to.midiDevice);
-              midiOut.send(midiMessage._type, midiMessage);
-            });
-          }
-        });
-      }
     });
     return this;
   }

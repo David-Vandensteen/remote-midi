@@ -11,9 +11,8 @@ import {
   easymidi,
   getOutputs,
   getInputs,
-  TCPMessage,
   MidiNormalizer,
-} from '#src/lib/remoteMidi';
+} from '#src/lib/remote-midi';
 
 export {
   RemoteMidiMaster,
@@ -22,6 +21,5 @@ export {
   easymidi,
   getOutputs,
   getInputs,
-  TCPMessage,
   MidiNormalizer,
 };
