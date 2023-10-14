@@ -2,6 +2,7 @@
 import { RemoteMidi } from '#src/lib/remote-midi';
 import { TCPServer } from '#src/lib/tcpServer';
 import { TCPMessage } from '#src/lib/tcpMessage';
+import easymidiTcpSender from '#src/lib/easymidi-tcp-sender';
 // import midiBinderService from '#src/service/midi-binder';
 import { log } from '#src/lib/log';
 
@@ -54,6 +55,7 @@ export default class RemoteMidiMaster extends RemoteMidi {
     tcpServer.on('connection', (socket) => {
       this.spinnies.succeed('waiting a slave connection');
       this.#socket = socket;
+      this.emit('connection', this);
 
       // this.#binders.forEach((binder) => {
       //   if (
@@ -85,6 +87,8 @@ export default class RemoteMidiMaster extends RemoteMidi {
     this.spinnies.add('waiting a slave connection');
     return this;
   }
+
+  sendMidiOverTCP(type, message) { easymidiTcpSender(this.#socket, type, message); }
 }
 
 export { RemoteMidiMaster };

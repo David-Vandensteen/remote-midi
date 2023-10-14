@@ -3,6 +3,7 @@ import { RemoteMidi } from '#src/lib/remote-midi';
 import easymidi from 'easymidi';
 import { TCPMidiClient } from '#src/lib/tcpMidiClient';
 import { TCPMessage } from '#src/lib/tcpMessage';
+import easymidiTcpSender from '#src/lib/easymidi-tcp-sender';
 import { log } from '#src/lib/log';
 
 export default class RemoteMidiSlave extends RemoteMidi {
@@ -13,13 +14,10 @@ export default class RemoteMidiSlave extends RemoteMidi {
     this.spinnies.add(`slave ${RemoteMidiSlave.hostname} connect to master ${this.host}`);
     this.#tcpMidiClient = new TCPMidiClient(this.host, this.port);
     this.#tcpMidiClient.start();
+    this.emit('connection', this);
     this.spinnies.succeed(`slave ${RemoteMidiSlave.hostname} connect to master ${this.host}`);
 
     this.#tcpMidiClient.write(TCPMessage.encode({ header: 'announce', node: `'${RemoteMidiSlave.hostname}`, midiDevices: [] }));
-
-    this.#tcpMidiClient.on('connection', (message) => {
-      log.info('slave connection message', message.toString());
-    });
 
     this.#tcpMidiClient.on('data', (dataBuffer) => {
       if (process.env.NODE_ENV === 'dev') log.info('slave received message', dataBuffer.toString());
@@ -57,6 +55,8 @@ export default class RemoteMidiSlave extends RemoteMidi {
     });
     return this;
   }
+
+  sendMidiOverTCP(type, message) { easymidiTcpSender(this.#tcpMidiClient, type, message); }
 }
 
 export { RemoteMidiSlave };

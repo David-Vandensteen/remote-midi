@@ -19,8 +19,8 @@ export default class RemoteMidi extends EventEmitter {
 
   constructor(host, port, options) {
     super();
-    if (!host) throw new Error('remoteMidiSlave::host is undefined');
-    if (!port) throw new Error('remoteMidiSlave::port is undefined');
+    if (!host) throw new Error('remoteMidi::host is undefined');
+    if (!port) throw new Error('remoteMidi::port is undefined');
     this.host = host;
     this.port = port;
 
